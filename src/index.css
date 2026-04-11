@@ -1,0 +1,47 @@
+/**
+ * Global stylesheet and Tailwind CSS v4 theme configuration.
+ *
+ * Custom design tokens (status colors for services) are defined inside the
+ * @theme block. Tailwind v4 reads these tokens directly from CSS -- there is
+ * no tailwind.config.js for custom values.
+ *
+ * The @layer base block sets a consistent focus-visible outline for all
+ * interactive elements (links, buttons, inputs, etc.) to meet accessibility
+ * requirements.
+ */
+@import "tailwindcss";
+
+/* Enables the `dark:` variant when a `.dark` class exists on any ancestor element.
+   The ThemeProvider in src/components/ThemeProvider.tsx toggles this class on <html>. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+	--color-status-scheduled-light: #dbeafe;
+	--color-status-scheduled-DEFAULT: #3b82f6;
+	--color-status-scheduled-dark: #1e40af;
+
+	--color-status-ongoing-light: #fef3c7;
+	--color-status-ongoing-DEFAULT: #f59e0b;
+	--color-status-ongoing-dark: #b45309;
+
+	--color-status-completed-light: #d1fae5;
+	--color-status-completed-DEFAULT: #10b981;
+	--color-status-completed-dark: #047857;
+
+	--color-status-cancelled-light: #fee2e2;
+	--color-status-cancelled-DEFAULT: #ef4444;
+	--color-status-cancelled-dark: #b91c1c;
+}
+
+@layer base {
+	/* Tailwind's preflight resets the cursor on buttons to the arrow.
+	   This puts the hand cursor back on all buttons site-wide. */
+	button {
+		cursor: pointer;
+	}
+
+	:where(a, button, input, select, textarea, [role="button"]):focus-visible {
+		outline: 2px solid #2563eb;
+		outline-offset: 2px;
+	}
+}

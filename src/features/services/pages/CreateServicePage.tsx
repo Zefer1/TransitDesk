@@ -1,0 +1,61 @@
+/** Page for creating a new service. Submits via the mock API and navigates to the detail page on success. */
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+import { ServiceForm } from "../components/ServiceForm";
+import { useToast } from "../../../components/useToast";
+import { createService } from "../../../api/services.api";
+import type { ValidatedServiceCreateValues } from "../schemas/serviceForm.schema";
+
+// Handles create flow: submit validated payload, notify user, and navigate to new detail page.
+
+export function CreateServicePage() {
+	const navigate = useNavigate();
+	const { addToast } = useToast();
+	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [error, setError] = useState<string | null>(null);
+
+	async function handleSubmit(values: ValidatedServiceCreateValues) {
+		setIsSubmitting(true);
+		setError(null);
+		try {
+			const response = await createService(values);
+			navigate(`/services/${response.data.id}`);
+		} catch (err) {
+			const message = err instanceof Error ? err.message : "Failed to create service. Please try again.";
+			setError(message);
+			addToast(message, "error");
+			setIsSubmitting(false);
+		}
+	}
+
+	return (
+		<div>
+			<div className="mb-6">
+				<h1 className="text-2xl font-bold text-gray-900 dark:text-white">Create Service</h1>
+				<p className="text-gray-600 dark:text-gray-400 mt-1">Fill in the details to schedule a new service.</p>
+			</div>
+
+			{error && (
+				<div
+					className="mb-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-md"
+					role="alert"
+				>
+					{error}
+				</div>
+			)}
+
+			<div className="rounded-lg bg-white dark:bg-gray-800 p-4 shadow sm:p-6">
+				<ServiceForm
+					onSubmit={handleSubmit}
+					submitLabel="Create Service"
+					isSubmitting={isSubmitting}
+				/>
+			</div>
+		</div>
+	);
+}
+
+
+
+
