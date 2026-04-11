@@ -1,0 +1,29 @@
+/* Hide the print sheet completely during normal screen use.
+   It only becomes visible when the browser's print dialog is open. */
+.print-only {
+  display: none;
+}
+
+/* When the user clicks Print or Save as PDF:
+   - Make everything on the page invisible using visibility (not display: none,
+     because display: none on a parent cannot be overridden on its children).
+   - Then make only the print sheet and all its children visible.
+   - Position it at the top-left corner so it fills the printed page cleanly. */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .print-only {
+    display: block;
+    visibility: visible;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+
+  .print-only * {
+    visibility: visible;
+  }
+}
