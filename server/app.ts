@@ -1,9 +1,10 @@
 // Entry point for the TransitDesk Express backend.
-// Phase 1: basic server with one health-check route.
-// Run with: node index.js (from inside the server/ folder)
+// Phase 1 complete: server running, routes extracted into server/routes/.
+// Run with: npm run dev (from inside the server/ folder)
 
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
+import driversRouter from './routes/drivers.js';
 
 const app = express();
 const PORT = 3001;
@@ -20,21 +21,14 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
-app.get('/api/drivers', (req, res) => {
-  res.json({
-    success: true,
-    data: [
-      {
-        id: 1,
-        name: "Joao Silva",
-        gender: "Male",
-        license: "D",
-        entitledToDrive: "Van",
-        phone: "+351910000000",
-      }
-    ],
-    pagination: { page: 1, pageSize: 1, total: 1, totalPages: 1 }
-  });
+app.use('/api', driversRouter);
+
+// Global error handler — catches any error passed to next(err)
+// Must have 4 parameters so Express recognises it as an error handler
+app.use((err: Error, _req: Request, res: Response, next: NextFunction) => {
+  void next;
+  console.error(err.message);
+  res.status(500).json({ success: false, error: 'Internal server error' });
 });
 
 app.listen(PORT, () => {
