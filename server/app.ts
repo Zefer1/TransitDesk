@@ -20,6 +20,23 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
+app.get('/api/drivers', (req, res) => {
+  res.json({
+    success: true,
+    data: [
+      {
+        id: 1,
+        name: "Joao Silva",
+        gender: "Male",
+        license: "D",
+        entitledToDrive: "Van",
+        phone: "+351910000000",
+      }
+    ],
+    pagination: { page: 1, pageSize: 1, total: 1, totalPages: 1 }
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
