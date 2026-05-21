@@ -26,7 +26,7 @@ export function GuideTable({ guides }: GuideTableProps) {
 	};
 
 	const goToEdit = (guideId: number) => {
-		navigate(`/guides/${guideId}/edit`);
+		navigate(`/guides/${guideId}`);
 	};
 
 	// Renders the View/Edit buttons for a single guide row.
