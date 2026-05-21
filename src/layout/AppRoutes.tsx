@@ -4,18 +4,15 @@ import { APP_ROUTES } from '../constants/routes';
 import { DriversListPage } from '../features/drivers/pages/DriversListPage';
 import { DriverCreatePage } from '../features/drivers/pages/DriverCreatePage';
 import { DriverDetailPage } from '../features/drivers/pages/DriverDetailPage';
-import { DriverEditPage } from '../features/drivers/pages/DriverEditPage';
 import { GuidesListPage } from '../features/guides/pages/GuidesListPage';
 import { GuideCreatePage } from '../features/guides/pages/GuideCreatePage';
 import { GuideDetailPage } from '../features/guides/pages/GuideDetailPage';
-import { GuideEditPage } from '../features/guides/pages/GuideEditPage';
 import { CreateServicePage } from '../features/services/pages/CreateServicePage';
 import { ServiceDetailPage } from '../features/services/pages/ServiceDetailPage';
 import { ServicesListPage } from '../features/services/pages/ServicesListPage';
 import { VehiclesListPage } from '../features/vehicles/pages/VehiclesListPage';
 import { VehicleCreatePage } from '../features/vehicles/pages/VehicleCreatePage';
 import { VehicleDetailPage } from '../features/vehicles/pages/VehicleDetailPage';
-import { VehicleEditPage } from '../features/vehicles/pages/VehicleEditPage';
 import { NotFoundPage } from '../pages/NotFoundPage';
 import { SettingsPage } from '../pages/SettingsPage';
 
@@ -31,17 +28,14 @@ export function AppRoutes() {
 
       <Route path={APP_ROUTES.drivers} element={<DriversListPage />} />
       <Route path={APP_ROUTES.newDriver} element={<DriverCreatePage />} />
-      <Route path={APP_ROUTES.editDriver} element={<DriverEditPage />} />
       <Route path={APP_ROUTES.driverDetail} element={<DriverDetailPage />} />
 
       <Route path={APP_ROUTES.vehicles} element={<VehiclesListPage />} />
       <Route path={APP_ROUTES.newVehicle} element={<VehicleCreatePage />} />
-      <Route path={APP_ROUTES.editVehicle} element={<VehicleEditPage />} />
       <Route path={APP_ROUTES.vehicleDetail} element={<VehicleDetailPage />} />
 
       <Route path={APP_ROUTES.guides} element={<GuidesListPage />} />
       <Route path={APP_ROUTES.newGuide} element={<GuideCreatePage />} />
-      <Route path={APP_ROUTES.editGuide} element={<GuideEditPage />} />
       <Route path={APP_ROUTES.guideDetail} element={<GuideDetailPage />} />
 
       <Route path={APP_ROUTES.settings} element={<SettingsPage />} />

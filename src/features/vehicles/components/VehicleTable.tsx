@@ -23,9 +23,8 @@ export function VehicleTable({ vehicles }: VehicleTableProps) {
 		navigate(`/vehicles/${vehicleId}`);
 	};
 
-	/** Navigate to the vehicle's edit page */
 	const goToEdit = (vehicleId: number) => {
-		navigate(`/vehicles/${vehicleId}/edit`);
+		navigate(`/vehicles/${vehicleId}`);
 	};
 
 	/**

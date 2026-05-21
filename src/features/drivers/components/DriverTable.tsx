@@ -28,7 +28,7 @@ export function DriverTable({ drivers }: DriverTableProps) {
 	};
 
 	const goToEdit = (driverId: number) => {
-		navigate(`/drivers/${driverId}/edit`);
+		navigate(`/drivers/${driverId}`);
 	};
 
 	/**
