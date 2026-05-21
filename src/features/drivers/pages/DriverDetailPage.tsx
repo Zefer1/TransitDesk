@@ -1,21 +1,4 @@
-/**
- * DriverDetailPage.tsx
- *
- * The detail page for a single driver. It supports three main interactions:
- *
- *   1. VIEW mode (default) -- shows read-only driver info via DriverDetailContent.
- *   2. EDIT mode -- swaps the read-only view for a DriverForm so the user can
- *      update the driver inline without navigating to a separate page.
- *   3. DELETE -- opens a confirmation modal. Before actually deleting, the page
- *      re-checks whether the driver has active service assignments (scheduled or
- *      ongoing). If they do, deletion is blocked to prevent orphaned services.
- *
- * Three custom hooks split the logic into focused pieces:
- *   - useLoadDriver:        fetches the driver by ID from the API.
- *   - useSaveDriver:        handles the update API call.
- *   - useDriverAssignments: checks for active services assigned to this driver.
- */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useToast } from "../../../components/useToast";
 import { APP_ROUTES } from "../../../constants/routes";
@@ -24,27 +7,137 @@ import { DriverDetailContent } from "../components/DriverDetailContent";
 import { EntityHeaderActions } from "../../../components/EntityHeaderActions";
 import { EntityDeleteModal } from "../../../components/EntityDeleteModal";
 import { EditSectionLayout } from "../../../components/EditSectionLayout";
-import { deleteDriver } from "../../../api/drivers.api";
+import { getDriverById, updateDriver, deleteDriver } from "../../../api/drivers.api";
+import { listServices } from "../../../api/services.api";
+import type { Driver } from "../../../types/service.types";
 import type { ValidatedDriverUpdateValues } from "../schemas/driverForm.schema";
-import { useLoadDriver } from "../hooks/useLoadDriver";
-import { useDriverAssignments } from "../hooks/useDriverAssignments";
-import { useSaveDriver } from "../hooks/useSaveDriver";
 
 export function DriverDetailPage() {
 	const navigate = useNavigate();
 	const { id } = useParams<{ id: string }>();
 	const { addToast } = useToast();
+
+	const [driver, setDriver] = useState<Driver | null>(null);
+	const [isLoading, setIsLoading] = useState(true);
+	const [errorMessage, setErrorMessage] = useState<string | null>(null);
+	const [reloadKey, setReloadKey] = useState(0);
+
 	const [isEditing, setIsEditing] = useState(false);
+	const [isSaving, setIsSaving] = useState(false);
+
 	const [isShowingDeleteConfirm, setIsShowingDeleteConfirm] = useState(false);
 	const [isDeleting, setIsDeleting] = useState(false);
 
-	// Convert the URL param from string to number so we can pass it to hooks and API calls
-	const driverId = Number(id);
-	const { driver, setDriver, isLoading, errorMessage, reload } = useLoadDriver(driverId);
-	const { activeAssignments, isCheckingAssignments, assignmentCheckError, refreshAssignments } = useDriverAssignments(driver?.id ?? null);
-	const { isSaving, saveDriver } = useSaveDriver();
+	const [activeAssignments, setActiveAssignments] = useState(0);
+	const [isCheckingAssignments, setIsCheckingAssignments] = useState(false);
+	const [assignmentCheckError, setAssignmentCheckError] = useState<string | null>(null);
 
-	// While the API is loading, show a skeleton placeholder to avoid layout jumps
+	const driverId = Number(id);
+	const hasValidId = Number.isInteger(driverId) && driverId > 0;
+
+	useEffect(() => {
+		if (!hasValidId) {
+			setIsLoading(false);
+			setErrorMessage("Invalid driver ID.");
+			return;
+		}
+
+		let cancelled = false;
+
+		async function fetchDriver() {
+			try {
+				setIsLoading(true);
+				setErrorMessage(null);
+				const response = await getDriverById(driverId);
+				if (!cancelled) setDriver(response.data);
+			} catch (error) {
+				if (!cancelled) {
+					const message = error instanceof Error ? error.message : "Unable to load driver.";
+					setErrorMessage(message);
+				}
+			} finally {
+				if (!cancelled) setIsLoading(false);
+			}
+		}
+
+		fetchDriver();
+		return () => { cancelled = true; };
+	}, [driverId, hasValidId, reloadKey]);
+
+	useEffect(() => {
+		if (!driver) return;
+
+		let cancelled = false;
+
+		async function checkAssignments() {
+			setIsCheckingAssignments(true);
+			setAssignmentCheckError(null);
+			try {
+				const response = await listServices();
+				if (!cancelled) {
+					const count = response.data.filter(
+						s => s.driver.id === driver!.id &&
+						(s.status === "scheduled" || s.status === "ongoing")
+					).length;
+					setActiveAssignments(count);
+				}
+			} catch {
+				if (!cancelled) setAssignmentCheckError("Unable to verify active assignments right now.");
+			} finally {
+				if (!cancelled) setIsCheckingAssignments(false);
+			}
+		}
+
+		checkAssignments();
+		return () => { cancelled = true; };
+	}, [driver]);
+
+	async function handleSave(values: ValidatedDriverUpdateValues) {
+		setIsSaving(true);
+		try {
+			const response = await updateDriver(values);
+			setDriver(response.data);
+			setIsEditing(false);
+			addToast("Driver updated successfully", "success");
+		} catch (error) {
+			const message = error instanceof Error ? error.message : "Failed to update driver";
+			addToast(message, "error");
+		} finally {
+			setIsSaving(false);
+		}
+	}
+
+	async function handleDelete() {
+		if (assignmentCheckError) {
+			addToast("Please retry assignment check before deleting this driver.", "error");
+			return;
+		}
+
+		setIsDeleting(true);
+		try {
+			const response = await listServices();
+			const count = response.data.filter(
+				s => s.driver.id === driver!.id &&
+				(s.status === "scheduled" || s.status === "ongoing")
+			).length;
+
+			if (count > 0) {
+				setActiveAssignments(count);
+				addToast("Cannot delete driver while it has active service assignments.", "error");
+				return;
+			}
+
+			await deleteDriver(driver!.id);
+			addToast("Driver deleted successfully", "success");
+			navigate(APP_ROUTES.drivers);
+		} catch (error) {
+			const message = error instanceof Error ? error.message : "Failed to delete driver";
+			addToast(message, "error");
+		} finally {
+			setIsDeleting(false);
+		}
+	}
+
 	if (isLoading) {
 		return (
 			<section className="space-y-6" aria-busy="true" aria-live="polite">
@@ -57,7 +150,6 @@ export function DriverDetailPage() {
 		);
 	}
 
-	// If the fetch failed or the driver was not found, show an error with a retry button
 	if (errorMessage || !driver) {
 		return (
 			<section className="space-y-4 rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-6 shadow">
@@ -66,7 +158,7 @@ export function DriverDetailPage() {
 				<div>
 					<button
 						type="button"
-						onClick={reload}
+						onClick={() => setReloadKey(k => k + 1)}
 						className="rounded-md border border-red-300 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-red-700 dark:text-red-400 transition hover:bg-red-100"
 					>
 						Retry
@@ -76,23 +168,12 @@ export function DriverDetailPage() {
 		);
 	}
 
-	// When the user clicks "Edit", swap the read-only view for an editable form
 	if (isEditing) {
 		return (
 			<EditSectionLayout title="Edit Driver" description="Update driver information.">
 				<DriverForm
 					initialData={driver}
-					onSubmit={async (values) => {
-						await saveDriver(
-							values as ValidatedDriverUpdateValues,
-							(updatedDriver) => {
-								setDriver(updatedDriver);
-								setIsEditing(false);
-								addToast("Driver updated successfully", "success");
-							},
-							(message) => addToast(message, "error"),
-						);
-					}}
+					onSubmit={async (values) => handleSave(values as ValidatedDriverUpdateValues)}
 					submitLabel="Update Driver"
 					isSubmitting={isSaving}
 					mode="edit"
@@ -102,39 +183,6 @@ export function DriverDetailPage() {
 		);
 	}
 
-	/**
-	 * Handles driver deletion. Before deleting, it does a fresh check for active
-	 * service assignments. This matters because another user could have assigned
-	 * this driver to a service between the time the page loaded and now.
-	 * If the driver still has active assignments, the delete is blocked.
-	 */
-	const handleDelete = async () => {
-		if (assignmentCheckError) {
-			addToast("Please retry assignment check before deleting this driver.", "error");
-			return;
-		}
-
-		setIsDeleting(true);
-		try {
-			const latestAssignments = await refreshAssignments(driver.id);
-
-			if (latestAssignments > 0) {
-				addToast("Cannot delete driver while it has active service assignments.", "error");
-				return;
-			}
-
-			await deleteDriver(driver.id);
-			addToast("Driver deleted successfully", "success");
-			setIsShowingDeleteConfirm(false);
-			navigate(APP_ROUTES.drivers);
-		} catch (error) {
-			const message = error instanceof Error ? error.message : "Failed to delete driver";
-			addToast(message, "error");
-		} finally {
-			setIsDeleting(false);
-		}
-	};
-
 	return (
 		<section className="space-y-6">
 			<div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
@@ -142,7 +190,6 @@ export function DriverDetailPage() {
 					<h1 className="text-2xl font-bold text-gray-900 dark:text-white">{driver.name}</h1>
 					<p className="mt-1 text-sm text-gray-600 dark:text-gray-400">Driver profile and assignment information</p>
 				</div>
-
 				<EntityHeaderActions
 					entityLabel="Driver"
 					onEdit={() => setIsEditing(true)}
@@ -177,6 +224,3 @@ export function DriverDetailPage() {
 		</section>
 	);
 }
-
-
-
