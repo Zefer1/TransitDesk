@@ -1,4 +1,3 @@
-/** React Router configuration. Maps URL paths to page components for all features. */
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { APP_ROUTES } from '../constants/routes';
 import { DriversListPage } from '../features/drivers/pages/DriversListPage';
@@ -15,8 +14,6 @@ import { VehicleCreatePage } from '../features/vehicles/pages/VehicleCreatePage'
 import { VehicleDetailPage } from '../features/vehicles/pages/VehicleDetailPage';
 import { NotFoundPage } from '../pages/NotFoundPage';
 import { SettingsPage } from '../pages/SettingsPage';
-
-// Route table below defines module entry points and fallback redirects.
 
 export function AppRoutes() {
   return (

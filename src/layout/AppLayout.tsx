@@ -1,9 +1,4 @@
-/** Main layout shell. Renders the header at top and constrains child content to max-w-7xl. */
 import type { ReactNode } from 'react';
-
-// Core flow note: the block below contains the main behavior used by this module.
-
-// Composes persistent chrome (header) with route content region.
 
 interface AppLayoutProps {
   header: ReactNode;

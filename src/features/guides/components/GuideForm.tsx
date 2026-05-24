@@ -1,18 +1,3 @@
-/**
- * GuideForm.tsx
- *
- * The shared form used for both creating and editing a guide. It handles:
- *   - Controlled inputs for name, gender, phone, and a dynamic list of languages
- *   - Client-side validation using the Zod schemas from guideForm.schema.ts
- *   - Displaying field-level and form-level errors
- *
- * The form works in two modes (passed via the `mode` prop):
- *   "create" -- validates with guideCreateSchema (no ID required)
- *   "edit"   -- validates with guideUpdateSchema (includes the guide's ID)
- *
- * It uses the shared CrudFormPrimitives components so all entity forms in
- * the app (vehicles, drivers, guides, etc.) have a consistent look and feel.
- */
 import { useState } from "react";
 import { z } from "zod";
 import { mapZodErrors } from "../../../lib/mapZodErrors";
@@ -48,12 +33,6 @@ type GuideFormState = {
 
 type GuideFormErrors = Record<string, string>;
 
-/**
- * Builds the starting values for the form fields.
- * If we are editing an existing guide, it fills in that guide's data.
- * If we are creating a new guide, everything starts blank.
- * It always ensures at least one empty language row so the user can type in it.
- */
 function buildInitialState(initialData?: Partial<Guide>): GuideFormState {
 	return {
 		name: initialData?.name ?? "",
@@ -75,9 +54,6 @@ export function GuideForm({
 	const [formState, setFormState] = useState<GuideFormState>(buildInitialState(initialData));
 	const [errors, setErrors] = useState<GuideFormErrors>({});
 
-	// --- Language list helpers ---
-	// Languages are stored as an array of strings in the form state.
-	// These three functions let the user add, remove, or edit individual entries.
 	const addLanguage = () => {
 		setFormState((current) => ({ ...current, languages: [...current.languages, ""] }));
 	};
@@ -97,13 +73,6 @@ export function GuideForm({
 		});
 	};
 
-	/**
-	 * Called when the user clicks the submit button.
-	 * 1. Prevents the default browser form submission (which would reload the page)
-	 * 2. Picks the right Zod schema based on create vs. edit mode
-	 * 3. Validates the form data -- if validation fails, shows errors on the fields
-	 * 4. If validation passes, calls the onSubmit callback provided by the parent page
-	 */
 	async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 		setErrors({});
@@ -129,7 +98,6 @@ export function GuideForm({
 
 	return (
 		<CrudForm onSubmit={handleSubmit}>
-			{/* Primary identity and contact fields used by assignment selectors. */}
 			<CrudFormSection
 				title="Guide Details"
 				description="Provide guide information including contact details and language coverage."
@@ -172,7 +140,6 @@ export function GuideForm({
 				</div>
 			</CrudFormSection>
 
-			{/* Language capability is managed as a dynamic list in the same payload. */}
 			<CrudFormSection
 				title="Languages"
 				description="Add the languages this guide can conduct tours in. At least one is required."
@@ -215,7 +182,6 @@ export function GuideForm({
 				</div>
 			</CrudFormSection>
 
-			{/* Form-level API/unknown errors are surfaced below sections. */}
 			{errors.submit && (
 				<div
 					className="rounded-md border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-4 text-sm text-red-700 dark:text-red-400"
@@ -233,6 +199,3 @@ export function GuideForm({
 		</CrudForm>
 	);
 }
-
-
-

@@ -1,8 +1,5 @@
-/** Top navigation bar with logo, nav links, and a "New Service" action button. */
 import { Link, NavLink } from 'react-router-dom';
 import { APP_ROUTES } from '../constants/routes';
-
-// Top-level navigation links below reflect the app information architecture.
 
 export function AppHeader() {
   return (

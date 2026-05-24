@@ -1,4 +1,3 @@
-/** useReducer-based state management for ServiceForm. Handles field updates, dynamic stops/languages lists, and vehicle/driver/guide assignment application. */
 import { useEffect, useReducer } from "react";
 
 import type { SetStateAction } from "react";
@@ -18,13 +17,11 @@ type ServiceFormStateAction =
 	| { type: "applyDriver"; payload: Driver | null }
 	| { type: "applyGuide"; payload: Guide | null; selectedGuideId: string };
 
-// Central reducer keeps form transitions explicit and easy to test.
 function serviceFormStateReducer(state: ServiceFormState, action: ServiceFormStateAction): ServiceFormState {
 	switch (action.type) {
 		case "replace":
 			return action.payload;
 		case "set":
-			// Supports both direct objects and functional updaters from React state APIs.
 			return typeof action.payload === "function"
 				? action.payload(state)
 				: action.payload;
@@ -39,7 +36,6 @@ function serviceFormStateReducer(state: ServiceFormState, action: ServiceFormSta
 				stops: [...state.stops, ""],
 			};
 		case "removeStop":
-			// Keep at least one stop input mounted so the UI and schema stay aligned.
 			return {
 				...state,
 				stops: state.stops.length === 1 ? [""] : state.stops.filter((_, index) => index !== action.index),
@@ -55,7 +51,6 @@ function serviceFormStateReducer(state: ServiceFormState, action: ServiceFormSta
 				},
 			};
 		case "addGuideLanguage":
-			// Adding a language implicitly enables guide inclusion.
 			return {
 				...state,
 				includeGuide: true,
@@ -76,7 +71,6 @@ function serviceFormStateReducer(state: ServiceFormState, action: ServiceFormSta
 				},
 			};
 		case "applyVehicle": {
-			// When selection is cleared, preserve typed manual fields and only clear id.
 			if (!action.payload) {
 				return {
 					...state,
@@ -107,7 +101,6 @@ function serviceFormStateReducer(state: ServiceFormState, action: ServiceFormSta
 			};
 		}
 		case "applyDriver": {
-			// Hydrates the nested driver object from selected assignment option.
 			if (!action.payload) {
 				return {
 					...state,
@@ -131,7 +124,6 @@ function serviceFormStateReducer(state: ServiceFormState, action: ServiceFormSta
 			};
 		}
 		case "applyGuide": {
-			// Guide inclusion follows selectedGuideId so users can explicitly clear guide.
 			if (!action.payload) {
 				return {
 					...state,
@@ -178,7 +170,6 @@ type UseServiceFormStateResult = {
 export function useServiceFormState(initialState: ServiceFormState): UseServiceFormStateResult {
 	const [formState, dispatch] = useReducer(serviceFormStateReducer, initialState);
 
-	// Re-seed reducer when parent provides new initial data (e.g., switching entity in edit mode).
 	useEffect(() => {
 		dispatch({ type: "replace", payload: initialState });
 	}, [initialState]);

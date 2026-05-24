@@ -1,13 +1,3 @@
-/**
- * VehicleCreatePage.tsx
- *
- * The page where users add a new vehicle to the fleet.
- * It renders the shared VehicleForm in "create" mode and handles what
- * happens after the form is submitted:
- *   - On success: saves the vehicle via the API, shows a success toast,
- *     and redirects to the new vehicle's detail page
- *   - On failure: shows an error message both inline and as a toast
- */
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../../../components/useToast";
@@ -22,7 +12,6 @@ export function VehicleCreatePage() {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	/** Send the validated form data to the API, then navigate to the new vehicle's page */
 	async function handleSubmit(values: ValidatedVehicleCreateValues | ValidatedVehicleUpdateValues) {
 		setIsSubmitting(true);
 		setError(null);

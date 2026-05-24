@@ -1,16 +1,3 @@
-/**
- * VehicleFiltersBar.tsx
- *
- * A row of filter controls that sits above the vehicle list table.
- * It lets the user narrow down the list by searching text, picking a
- * vehicle type, or setting a minimum/maximum passenger capacity.
- *
- * This component is "controlled" -- it does not hold its own filter state.
- * Instead, the parent passes the current filter values down as props,
- * along with callback functions that update those values. This keeps the
- * filtering logic in one place (the useVehicleFilters hook) and makes
- * this component easy to test in isolation.
- */
 import { VEHICLE_TYPES } from "../../../constants/enums";
 import type { VehicleFiltersState } from "../../../hooks/useVehicleFilters";
 

@@ -1,17 +1,3 @@
-/**
- * DriverTable.tsx
- *
- * Displays a list of drivers in two different layouts depending on screen size:
- *   - On mobile (small screens): a vertical stack of cards, one per driver.
- *   - On desktop (medium screens and up): a traditional HTML table with columns.
- *
- * Both layouts are always in the DOM -- Tailwind's responsive classes (md:hidden
- * and hidden md:block) toggle which one is visible. This is a common pattern
- * for responsive tables.
- *
- * Each row/card is clickable and navigates to that driver's detail page.
- * "View" and "Edit" action buttons are also provided on each row.
- */
 import { useNavigate } from "react-router-dom";
 
 import type { Driver } from "../../../types/service.types";
@@ -31,11 +17,6 @@ export function DriverTable({ drivers }: DriverTableProps) {
 		navigate(`/drivers/${driverId}`);
 	};
 
-	/**
-	 * Renders the "View" and "Edit" buttons for a single driver.
-	 * stopPropagation prevents the button click from also triggering
-	 * the row's onClick (which navigates to the detail page).
-	 */
 	const renderActions = (driver: Driver) => (
 		<div className="flex items-center gap-2" onClick={(event) => event.stopPropagation()}>
 			<button
@@ -59,7 +40,6 @@ export function DriverTable({ drivers }: DriverTableProps) {
 
 	return (
 		<div className="space-y-4">
-			{/* Mobile layout: card grid, hidden on medium+ screens */}
 			<div className="grid gap-4 md:hidden">
 				{drivers.map((driver) => (
 					<article
@@ -99,7 +79,6 @@ export function DriverTable({ drivers }: DriverTableProps) {
 				))}
 			</div>
 
-			{/* Desktop layout: standard HTML table, hidden on small screens */}
 			<div className="hidden overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow md:block">
 				<table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
 					<thead className="bg-gray-50 dark:bg-gray-900">
@@ -165,6 +144,3 @@ export function DriverTable({ drivers }: DriverTableProps) {
 		</div>
 	);
 }
-
-
-
