@@ -1,12 +1,3 @@
-/**
- * GuideCreatePage.tsx
- *
- * The page where a user creates a brand-new guide. It renders the shared
- * GuideForm in "create" mode. When the form is submitted:
- *   1. The validated data is sent to the API (createGuide)
- *   2. On success, the user is redirected to the new guide's detail page
- *   3. On failure, an error message is shown both inline and as a toast
- */
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../../../components/useToast";
@@ -21,7 +12,6 @@ export function GuideCreatePage() {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	// Sends the new guide data to the API, shows a toast, and navigates on success.
 	async function handleSubmit(values: ValidatedGuideCreateValues | ValidatedGuideUpdateValues) {
 		setIsSubmitting(true);
 		setError(null);

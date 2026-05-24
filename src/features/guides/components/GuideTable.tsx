@@ -1,16 +1,3 @@
-/**
- * GuideTable.tsx
- *
- * Displays the list of guides in two different layouts depending on screen size:
- *   - On mobile: a vertical stack of summary cards
- *   - On desktop: a traditional HTML table with columns for name, gender, etc.
- *
- * Both layouts are rendered at the same time in the DOM. Tailwind's responsive
- * utility classes (`md:hidden` / `hidden md:block`) handle showing the right one.
- *
- * Clicking a row (or card) navigates the user to that guide's detail page.
- * Each row also has explicit "View" and "Edit" action buttons.
- */
 import { useNavigate } from "react-router-dom";
 import type { Guide } from "../../../types/service.types";
 
@@ -29,8 +16,6 @@ export function GuideTable({ guides }: GuideTableProps) {
 		navigate(`/guides/${guideId}`);
 	};
 
-	// Renders the View/Edit buttons for a single guide row.
-	// stopPropagation prevents the button click from also triggering the row's onClick.
 	const renderActions = (guide: Guide) => (
 		<div className="flex items-center gap-2" onClick={(event) => event.stopPropagation()}>
 			<button
@@ -52,7 +37,6 @@ export function GuideTable({ guides }: GuideTableProps) {
 		</div>
 	);
 
-	// Turns the languages array into a comma-separated string for the mobile cards.
 	const formatLanguages = (languages: string[] | undefined) => {
 		if (!languages || languages.length === 0) return "N/A";
 		return languages.join(", ");
@@ -60,7 +44,6 @@ export function GuideTable({ guides }: GuideTableProps) {
 
 	return (
 		<div className="space-y-4">
-			{/* Mobile cards */}
 			<div className="grid gap-4 md:hidden">
 				{guides.map((guide) => (
 					<article
@@ -100,7 +83,6 @@ export function GuideTable({ guides }: GuideTableProps) {
 				))}
 			</div>
 
-			{/* Desktop table */}
 			<div className="hidden overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow md:block">
 				<table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
 					<thead className="bg-gray-50 dark:bg-gray-900">
@@ -182,6 +164,3 @@ export function GuideTable({ guides }: GuideTableProps) {
 		</div>
 	);
 }
-
-
-

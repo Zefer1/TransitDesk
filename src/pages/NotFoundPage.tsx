@@ -1,10 +1,5 @@
-/** 404 page shown for unmatched routes. Links back to the services list. */
 import { Link } from "react-router-dom";
 import { APP_ROUTES } from "../constants/routes";
-
-// Core flow note: the block below contains the main behavior used by this module.
-
-// Fallback route gives users a safe recovery path back to a known module.
 
 export function NotFoundPage() {
 	return (
