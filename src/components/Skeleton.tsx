@@ -1,8 +1,3 @@
-/**
- * Skeleton components for loading states 
- * Used in ServicesListPage (table rows) and ServiceDetailPage (detail cards).
- */
-
 function SkeletonBox({ className }: { className?: string }) {
 	return (
 		<div
@@ -126,6 +121,3 @@ export function SkeletonDetailPage() {
 		</section>
 	);
 }
-
-
-

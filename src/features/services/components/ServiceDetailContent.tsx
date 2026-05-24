@@ -1,23 +1,7 @@
-/**
- * ServiceDetailContent.tsx
- *
- * Read-only view shown on the service detail page when the user is NOT editing.
- * It displays summary cards (route, capacity, duration), service metadata,
- * assigned vehicle/driver/guide info, and buttons to trigger status transitions
- * (e.g. "Start Service", "Complete Service", "Cancel Service").
- *
- * This component receives all its data as props -- it does not fetch anything itself.
- * The parent (ServiceDetailPage) is responsible for loading the service and
- * passing transition handlers.
- */
 import { ALLOWED_TRANSITIONS } from "../../../constants/serviceStatuses";
 import type { Service, ServiceStatus } from "../../../types/service.types";
 import { formatDateTime, formatTotalEstimatedTime } from "../utils/serviceFormatters";
 
-/**
- * Human-readable labels for each status transition button.
- * These are displayed on the action buttons at the bottom of the detail page.
- */
 const transitionButtonLabel: Record<ServiceStatus, string> = {
 	scheduled: "Mark as Scheduled",
 	ongoing: "Start Service",
@@ -36,20 +20,16 @@ export function ServiceDetailContent({
 	isTransitioning,
 	onTransitionClick,
 }: ServiceDetailContentProps) {
-	// Build a readable route string like "Funchal -> Santana -> Porto Moniz"
 	const routeStops = service.stops
 		.map((stop) => stop.trim())
 		.filter((stop) => stop.length > 0);
 	const routeSummary = routeStops.length > 0 ? routeStops.join(" -> ") : "-";
 
-	// Calculate vehicle occupancy stats for the summary cards
 	const passengerCount = service.passengerQuantity ?? 0;
 	const capacity = service.vehicle.passengerCapacity ?? 0;
 	const occupancy = capacity > 0 ? Math.round((passengerCount / capacity) * 100) : 0;
 	const seatsRemaining = Math.max(capacity - passengerCount, 0);
 
-	// Look up which status transitions are allowed from the current status
-	// (e.g. a "scheduled" service can move to "ongoing" or "cancelled")
 	const nextTransitions = ALLOWED_TRANSITIONS[service.status];
 
 	return (
@@ -155,7 +135,6 @@ export function ServiceDetailContent({
 				</article>
 			</div>
 
-			{/* Only show status action buttons when at least one transition is available */}
 			{nextTransitions.length > 0 ? (
 				<div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
 					<h2 className="text-lg font-semibold text-gray-900 dark:text-white">Status actions</h2>

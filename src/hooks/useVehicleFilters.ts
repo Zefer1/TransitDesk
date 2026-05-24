@@ -1,9 +1,6 @@
-/** Filter hook for the vehicles list. Filters by plate/brand/model/color search, vehicle type, and passenger capacity range. */
 import { useMemo, useState } from "react";
 import { VEHICLE_TYPES } from "../constants/enums";
 import type { Vehicle } from "../types/service.types";
-
-// Computes derived vehicle filter state including capacity range checks.
 
 export type VehicleFiltersState = {
 	search: string;

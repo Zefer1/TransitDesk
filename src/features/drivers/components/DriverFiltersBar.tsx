@@ -1,18 +1,3 @@
-/**
- * DriverFiltersBar.tsx
- *
- * A row of filter controls that sits above the driver list table.
- * It lets the user narrow down the displayed drivers by:
- *   - Typing a search term (matches against name or license)
- *   - Picking a specific license type from a dropdown
- *   - Picking a vehicle type the driver is entitled to drive
- *
- * This component is "controlled" -- it does not manage its own state.
- * Instead, the parent (DriversListPage) owns the filter state through
- * the useDriverFilters hook and passes values + change handlers down here.
- * When the user interacts with a control, the matching callback fires
- * and the parent updates its state, which re-renders this component.
- */
 import { DRIVER_LICENSES, VEHICLE_TYPES } from "../../../constants/enums";
 import type { DriverFiltersState } from "../../../hooks/useDriverFilters";
 
@@ -88,6 +73,3 @@ export function DriverFiltersBar({
 		</div>
 	);
 }
-
-
-

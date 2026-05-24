@@ -1,16 +1,3 @@
-/**
- * GuidesListPage.tsx
- *
- * The main landing page for the guides feature. It shows a searchable,
- * filterable table of all guides in the system.
- *
- * How it works:
- *   1. On mount, it fetches the full list of guides from the API
- *   2. The useGuideFilters hook provides search and language filtering
- *   3. The filtered results are passed to GuideTable for display
- *   4. If there are no guides at all, it shows an "empty state" prompt
- *   5. If there are guides but none match the filters, it shows a different message
- */
 import { useEffect, useState } from "react";
 import { CrudListLayout } from "../../../components/CrudListLayout";
 import { EmptyState } from "../../../components/EmptyState";
@@ -39,12 +26,6 @@ export function GuidesListPage() {
 		resetFilters,
 	} = useGuideFilters(guides);
 
-	/**
-	 * Fetches guides from the API when the page loads (or when retrying).
-	 * The `isMounted` flag prevents updating state if the component unmounts
-	 * while the request is still in flight -- this avoids React warnings
-	 * about setting state on an unmounted component.
-	 */
 	useEffect(() => {
 		let isMounted = true;
 
@@ -82,7 +63,6 @@ export function GuidesListPage() {
 		};
 	}, [addToast, reloadKey]);
 
-	// Bumping reloadKey triggers the useEffect above to re-fetch guides.
 	const handleRetry = () => {
 		setReloadKey((current) => current + 1);
 	};
@@ -116,7 +96,6 @@ export function GuidesListPage() {
 					: undefined
 			}
 		>
-			{/* When filters produce zero results, show a hint to broaden the search */}
 			{filteredGuides.length === 0 ? (
 				<EmptyState
 					title="No matching guides"

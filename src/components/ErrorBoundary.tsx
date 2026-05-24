@@ -1,10 +1,7 @@
-/** Global React error boundary. Catches unhandled errors and shows a recovery UI with reload and navigation options. */
 import { Component, type ErrorInfo, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 
 import { APP_ROUTES } from "../constants/routes";
-
-// Captures runtime render failures and provides recovery options without crashing the whole app.
 
 type ErrorBoundaryProps = {
 	children: ReactNode;
@@ -61,6 +58,3 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 		);
 	}
 }
-
-
-
