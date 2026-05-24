@@ -1,9 +1,6 @@
-/** Base Zod schema for vehicle fields. Reused by both the vehicle form schema and the service form's embedded vehicle validation. */
 import { z } from "zod";
 
 import { SERVICE_TYPES, VEHICLE_TYPES } from "../../../constants/enums";
-
-// Base vehicle field rules below are shared by create/update schemas to keep constraints aligned.
 
 const requiredText = (fieldName: string) =>
   z.string().trim().min(1, `${fieldName} is required`);

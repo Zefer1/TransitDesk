@@ -1,4 +1,3 @@
-/** Settings page. Manages appearance, company info, and data reset. */
 import { useState } from 'react';
 import { CrudFormSection, CrudTextInput } from '../components/CrudFormPrimitives';
 import { useToast } from '../components/useToast';
@@ -8,20 +7,14 @@ import { resetDriversToDefaults } from '../api/drivers.api';
 import { resetGuidesToDefaults } from '../api/guides.api';
 import { resetServicesToDefaults } from '../api/services.api';
 
-/** Key used to read/write company settings in localStorage. */
 const COMPANY_STORAGE_KEY = 'transitdesk:company:v1';
 
 export function SettingsPage() {
   const { addToast } = useToast();
   const { theme, toggleTheme } = useTheme();
 
-  // confirmReset gates the destructive action — first click shows "Are you sure?",
-  // second click (Yes, reset) actually fires. Cancel flips it back to false.
   const [confirmReset, setConfirmReset] = useState(false);
 
-  // Passing a function to useState is called "lazy initialisation" -- React
-  // calls it once on mount to get the starting value. We use it to read from
-  // localStorage right away so we never need a useEffect just to set state.
   const [form, setForm] = useState(() => {
     const saved = localStorage.getItem(COMPANY_STORAGE_KEY);
     if (saved) {
@@ -37,15 +30,10 @@ export function SettingsPage() {
     return { companyName: '', rnaat: '', tp: '', designation: '', logoUrl: '' };
   });
 
-  // Read the selected image file and convert it to a base64 string.
-  // FileReader.readAsDataURL turns any file into a "data:image/png;base64,..."
-  // string that can be stored in state and localStorage like any other string.
   function handleLogoChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // localStorage has a ~5MB limit. Base64 encoding inflates file size by ~33%,
-    // so we cap at 1MB to stay safe and give the user a clear error if they go over.
     if (file.size > 1_000_000) {
       addToast('Image must be under 1MB.', 'error');
       return;
@@ -58,22 +46,15 @@ export function SettingsPage() {
     reader.readAsDataURL(file);
   }
 
-  // Clear the logo from state. It won't be removed from localStorage
-  // until the user clicks Save (same as the other fields).
   function handleRemoveLogo() {
     setForm((current) => ({ ...current, logoUrl: '' }));
   }
 
-  // Write the form object to localStorage as JSON and show a toast.
-  // localStorage is synchronous so no async/await needed.
   function handleSave() {
     localStorage.setItem(COMPANY_STORAGE_KEY, JSON.stringify(form));
     addToast('Company info saved.', 'success');
   }
 
-  // Restore all four mock stores to their seed data and show a toast.
-  // The in-memory stores are replaced immediately; services also clears sessionStorage.
-  // No page reload needed — navigate to any list to see the fresh data.
   function handleReset() {
     resetVehiclesToDefaults();
     resetDriversToDefaults();
@@ -90,7 +71,6 @@ export function SettingsPage() {
         <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">Manage appearance and company information.</p>
       </div>
 
-      {/* Appearance card */}
       <CrudFormSection title="Appearance" description="Choose how the app looks.">
         <div className="flex items-center justify-between">
           <div>
@@ -107,12 +87,10 @@ export function SettingsPage() {
         </div>
       </CrudFormSection>
 
-      {/* Company info form */}
       <CrudFormSection
         title="Company"
         description="This information appears on printed service sheets."
       >
-        {/* Logo upload */}
         <div className="space-y-3">
           <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Company Logo</p>
 
@@ -183,7 +161,6 @@ export function SettingsPage() {
         </div>
       </CrudFormSection>
 
-      {/* Data reset */}
       <CrudFormSection title="Data" description="Reset all mock data back to the built-in defaults.">
         <div className="space-y-3">
           <p className="text-sm text-gray-600 dark:text-gray-400">

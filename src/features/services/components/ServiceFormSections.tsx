@@ -1,16 +1,3 @@
-/**
- * ServiceFormSections.tsx
- *
- * Contains the four major sections of the service form, each as its own component:
- * - ServiceDetailsSection: scheduling, route stops, passenger count, and notes
- * - VehicleSection: vehicle assignment dropdown and all vehicle detail fields
- * - DriverSection: driver assignment dropdown and driver detail fields
- * - GuideSection: optional guide assignment with language management
- *
- * Each section receives its slice of form state and error messages as props from
- * ServiceForm (the parent orchestrator). The sections use the primitive input
- * components from ServiceFormPrimitives.tsx to render actual fields.
- */
 import {
 	AssignmentSelectInput,
 	Section,
@@ -41,8 +28,6 @@ type ServiceDetailsSectionProps = {
 	removeStop: (index: number) => void;
 };
 
-// Renders the core service planning fields: date/time, type, status, passengers,
-// distance, duration, description, agency, route stops, and free-form notes.
 export function ServiceDetailsSection({
 	formState,
 	errors,
@@ -56,7 +41,6 @@ export function ServiceDetailsSection({
 }: ServiceDetailsSectionProps) {
 	return (
 		<Section title="Service details" description="Core scheduling, route, and passenger data.">
-			{/* Top grid for required and high-signal planning fields. */}
 			<div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
 				<TextInput
 					label="Scheduled time"
@@ -130,7 +114,6 @@ export function ServiceDetailsSection({
 				/>
 			</div>
 
-			{/* Secondary fields that are usually optional but useful for operations. */}
 			<div className="grid gap-4 md:grid-cols-2">
 				<TextInput
 					label="Description"
@@ -155,7 +138,6 @@ export function ServiceDetailsSection({
 				/>
 			</div>
 
-			{/* Dynamic list: at least one stop is always kept to match schema expectations. */}
 			<div className="space-y-3">
 				<div className="flex flex-wrap items-center justify-between gap-2">
 					<div>
@@ -197,7 +179,6 @@ export function ServiceDetailsSection({
 				))}
 			</div>
 
-			{/* Free-form operator notes for this service. */}
 			<TextAreaInput
 				label="Notes"
 				value={formState.notes}
@@ -223,9 +204,6 @@ type VehicleSectionProps = {
 	applySelectedVehicle: (vehicleId: string) => void;
 };
 
-// Renders the vehicle assignment section. When the user picks a vehicle from the dropdown,
-// all the detail fields (plate, brand, model, etc.) are auto-filled and disabled.
-// If no vehicles are available from the API, the fields become manually editable.
 export function VehicleSection({
 	assignmentError,
 	staleVehicleWarning,
@@ -241,21 +219,18 @@ export function VehicleSection({
 }: VehicleSectionProps) {
 	return (
 		<Section title="Vehicle" description="Vehicle assignment and operating profile.">
-			{/* API assignment loading/error feedback shown above controls for visibility. */}
 			{assignmentError ? (
 				<div className="rounded-md border border-red-200 bg-red-50 dark:bg-red-900/20 px-4 py-3 text-sm text-red-700 dark:text-red-400">
 					{assignmentError}
 				</div>
 			) : null}
 
-			{/* Warns when initial edit data references an entity that no longer exists in options. */}
 			{staleVehicleWarning ? (
 				<div className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
 					{staleVehicleWarning}
 				</div>
 			) : null}
 
-			{/* Primary assignment entrypoint: selecting here hydrates all vehicle subfields. */}
 			<AssignmentSelectInput
 				label="Choose vehicle"
 				value={formState.vehicle.id}
@@ -267,7 +242,6 @@ export function VehicleSection({
 				helpText="Options show plate, model, and passenger capacity."
 			/>
 
-			{/* Detailed vehicle payload fields; disabled when selection comes from known options. */}
 			<div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
 				<TextInput
 					label="Vehicle ID"

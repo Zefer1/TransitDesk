@@ -1,8 +1,3 @@
-/**
- * Edit and Delete action buttons for entity detail pages.
- * The delete button is disabled while assignments are loading or when active assignments exist.
- */
-// Header actions keep edit/delete affordances consistent and assignment-aware across entity detail pages.
 type EntityHeaderActionsProps = {
 	entityLabel: string;
 	onEdit: () => void;
@@ -20,7 +15,6 @@ export function EntityHeaderActions({
 	activeAssignments,
 	assignmentCheckError,
 }: EntityHeaderActionsProps) {
-	// Delete action follows a strict guardrail order: loading -> error -> active assignments -> enabled.
 	return (
 		<div className="flex gap-2">
 			<button
@@ -68,6 +62,3 @@ export function EntityHeaderActions({
 		</div>
 	);
 }
-
-
-

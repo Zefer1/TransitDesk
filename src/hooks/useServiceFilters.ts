@@ -1,10 +1,5 @@
-/** Filter hook for the services list. Filters by status, description search, and date range. Exports testable helper functions. */
 import { useMemo, useState } from "react";
 import type { Service, ServiceStatus } from "../types/service.types";
-
-// Core flow note: the block below contains the main behavior used by this module.
-
-// Applies status/search/date filters in a deterministic order for predictable list behavior.
 
 export type ServiceFilters = {
 	status: ServiceStatus | "all";

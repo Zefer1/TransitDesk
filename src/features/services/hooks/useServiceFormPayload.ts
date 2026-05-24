@@ -1,8 +1,6 @@
-/** Builds initial form state from existing data, creates the API payload from form state, and maps Zod errors to field-level messages. */
 import type { Service } from "../../../types/service.types";
 import type { ServiceFormState } from "../components/serviceForm.types";
 
-// Converts persisted ISO timestamps into datetime-local input format (YYYY-MM-DDTHH:mm).
 function toDateTimeLocalValue(value?: string): string {
 	if (!value) {
 		return "";
@@ -17,7 +15,6 @@ function toDateTimeLocalValue(value?: string): string {
 	return new Date(parsed.getTime() - timezoneOffset).toISOString().slice(0, 16);
 }
 
-// Converts datetime-local input back to canonical ISO before API validation/submission.
 function fromDateTimeLocalValue(value: string): string {
 	if (!value) {
 		return "";
@@ -27,7 +24,6 @@ function fromDateTimeLocalValue(value: string): string {
 	return Number.isNaN(parsed.getTime()) ? value : parsed.toISOString();
 }
 
-// Normalizes optional scalar values for controlled form inputs.
 function toTextValue(value?: string | number): string {
 	return value == null ? "" : String(value);
 }
@@ -42,7 +38,6 @@ function normalizeOptionalDate(value: string): string | undefined {
 	return trimmed ? trimmed : undefined;
 }
 
-// Builds reducer-friendly form state from partial API entity data.
 export function buildInitialServiceFormState(initialData?: Partial<Omit<Service, "id">>): ServiceFormState {
 	return {
 		scheduledAt: toDateTimeLocalValue(initialData?.scheduledAt),
@@ -89,9 +84,7 @@ export function buildInitialServiceFormState(initialData?: Partial<Omit<Service,
 	};
 }
 
-// Builds the exact payload shape expected by the Zod contract/API layer.
 export function createServiceFormPayload(formState: ServiceFormState): Record<string, unknown> {
-	// Guide payload is omitted entirely when includeGuide is false.
 	const guidePayload = formState.includeGuide
 		? {
 				id: formState.guide.id,

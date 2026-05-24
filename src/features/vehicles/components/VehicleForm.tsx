@@ -1,18 +1,3 @@
-/**
- * VehicleForm.tsx
- *
- * The shared form used for both creating and editing vehicles.
- * It collects all vehicle fields (plate, brand, model, capacity, etc.),
- * validates them with a Zod schema on submit, and passes the validated
- * data up to the parent page via the onSubmit callback.
- *
- * The form works in two modes:
- *   - "create" mode: all fields start empty, validated with vehicleCreateSchema
- *   - "edit" mode:   fields are pre-filled from initialData, validated with vehicleUpdateSchema
- *
- * Validation errors from Zod are shown inline next to each field.
- * Unexpected errors (like network failures) are shown in a banner at the bottom.
- */
 import { useState } from "react";
 import { z } from "zod";
 import { mapZodErrors } from "../../../lib/mapZodErrors";
@@ -29,7 +14,6 @@ import { vehicleCreateSchema, vehicleUpdateSchema } from "../schemas/vehicleForm
 import type { Vehicle } from "../../../types/service.types";
 import type { ValidatedVehicleCreateValues, ValidatedVehicleUpdateValues } from "../schemas/vehicleForm.schema";
 
-/** The form supports two modes: creating a brand-new vehicle or editing an existing one. */
 type VehicleFormMode = "create" | "edit";
 
 type VehicleFormProps = {
@@ -58,15 +42,6 @@ type VehicleFormState = {
 
 type VehicleFormErrors = Record<string, string>;
 
-/**
- * Builds the starting values for the form fields.
- * When editing, it pre-fills values from the existing vehicle data.
- * When creating, everything defaults to empty strings / true.
- *
- * Note: numeric fields like "year" are stored as strings here because
- * HTML inputs always give us strings -- the Zod schema converts them
- * back to numbers during validation.
- */
 function buildInitialState(initialData?: Partial<Vehicle>): VehicleFormState {
 	return {
 		licensePlate: initialData?.licensePlate ?? "",
@@ -96,18 +71,11 @@ export function VehicleForm({
 	const [formState, setFormState] = useState<VehicleFormState>(buildInitialState(initialData));
 	const [errors, setErrors] = useState<VehicleFormErrors>({});
 
-	/**
-	 * Handles form submission:
-	 * 1. Pick the right Zod schema based on whether we are creating or editing
-	 * 2. Run validation -- if it fails, show field-level error messages
-	 * 3. If validation passes, call the parent's onSubmit with the clean data
-	 */
 	async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 		setErrors({});
 
 		try {
-			// In edit mode we attach the vehicle's ID so the update schema can validate it
 			const schema = mode === "edit" && initialData?.id
 				? vehicleUpdateSchema
 				: vehicleCreateSchema;
@@ -120,7 +88,6 @@ export function VehicleForm({
 			await onSubmit(validatedData);
 		} catch (error) {
 			if (error instanceof z.ZodError) {
-				// Turn Zod's array of issues into a simple { fieldName: message } map
 				setErrors(mapZodErrors(error));
 			} else {
 				const message = error instanceof Error ? error.message : "An error occurred";
@@ -131,8 +98,7 @@ export function VehicleForm({
 
 	return (
 		<CrudForm onSubmit={handleSubmit}>
-			{/* Section 1: Required fields -- the essential info every vehicle needs */}
-			<CrudFormSection 
+			<CrudFormSection
 				title="Vehicle Details" 
 				description="Provide vehicle information including registration and capacity details."
 			>
@@ -203,7 +169,6 @@ export function VehicleForm({
 				</div>
 			</CrudFormSection>
 
-			{/* Section 2: Optional fields -- dates, service type preference, active toggle, notes */}
 			<CrudFormSection
 				title="Optional Details"
 				description="Additional registration and assignment information."
@@ -259,7 +224,6 @@ export function VehicleForm({
 				</div>
 			</CrudFormSection>
 
-			{/* If something unexpected goes wrong (like a network error), show it here */}
 			{errors.submit && (
 				<div className="rounded-md border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-4 text-sm text-red-700 dark:text-red-400">
 					{errors.submit}

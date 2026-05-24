@@ -1,14 +1,3 @@
-/**
- * GuideDetailContent.tsx
- *
- * A read-only display component that shows a guide's personal information,
- * spoken languages, and current assignment status. This is the "view mode"
- * content rendered on the guide detail page when the user is NOT editing.
- *
- * It receives all its data through props -- it does not fetch anything itself.
- * The parent page (GuideDetailPage) is responsible for loading the guide and
- * checking assignments, then passing the results down here.
- */
 import type { Guide } from "../../../types/service.types";
 
 type GuideDetailContentProps = {
@@ -24,7 +13,6 @@ export function GuideDetailContent({
 }: GuideDetailContentProps) {
 	return (
 		<div className="grid gap-6 md:grid-cols-2">
-			{/* Left card: name, gender, and phone */}
 			<div className="space-y-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow">
 				<h3 className="text-lg font-semibold text-gray-900 dark:text-white">Personal Information</h3>
 				<dl className="space-y-4">
@@ -43,7 +31,6 @@ export function GuideDetailContent({
 				</dl>
 			</div>
 
-			{/* Right card: languages the guide speaks, plus their assignment status */}
 			<div className="space-y-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow">
 				<h3 className="text-lg font-semibold text-gray-900 dark:text-white">Languages</h3>
 				{guide.languages && guide.languages.length > 0 ? (
@@ -61,11 +48,6 @@ export function GuideDetailContent({
 					<p className="text-sm text-gray-500 dark:text-gray-400">No languages listed.</p>
 				)}
 
-				{/*
-				  Assignment status tells the user whether this guide is currently
-				  assigned to any active (scheduled/ongoing) services. This matters
-				  because a guide with active assignments cannot be deleted.
-				*/}
 				<div className="mt-4 border-t border-gray-100 dark:border-gray-700 pt-4">
 					<dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Assignment Status</dt>
 					<dd className="mt-1">
@@ -90,6 +72,3 @@ export function GuideDetailContent({
 		</div>
 	);
 }
-
-
-

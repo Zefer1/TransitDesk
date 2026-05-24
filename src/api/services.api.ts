@@ -1,16 +1,3 @@
-/**
- * Mock API for Services.
- *
- * This is more complex than the other mock APIs (drivers, vehicles, guides) because:
- *
- *  1. Services have status transition rules (e.g. "scheduled" can become "ongoing"
- *     but not jump straight to "completed"). See serviceStatuses.ts for the rules.
- *  2. Data is saved to sessionStorage so it survives page refreshes during development.
- *  3. Each service record embeds full Vehicle, Driver, and Guide objects (nested entities).
- *
- * When replacing with the real backend, keep the same exported function names and
- * return types -- just swap the body of each function for an Axios call.
- */
 import type {
   Service,
   Vehicle,
@@ -23,12 +10,6 @@ import type {
 import type { ApiResponse, PaginatedApiResponse } from "../types/api.types";
 import { mockDelay } from "./mockDelay";
 
-/*
- * ---------- Seed data ----------
- * These fake records are used to populate the services list on first load.
- * They reference mock Vehicle, Driver, and Guide objects so the UI has
- * something realistic to display.
- */
 const VEHICLE_TYPE: VehicleType = "Van";
 const GENDER: Gender = "Male";
 
@@ -62,7 +43,6 @@ const mockGuide: Guide = {
 
 const now = Date.now();
 
-/** Key used to read/write the services array in the browser's sessionStorage. */
 const SERVICES_STORAGE_KEY = "transitdesk:services-store:v1";
 
 const seededServicesStore: Service[] = [
@@ -95,13 +75,6 @@ const seededServicesStore: Service[] = [
   },
 ];
 
-/*
- * ---------- SessionStorage persistence helpers ----------
- * These small functions handle saving and loading the services array from the
- * browser's sessionStorage. This way mock data survives page refreshes during
- * development. If sessionStorage is not available (e.g. in SSR or tests), we
- * silently fall back to the seed data.
- */
 function canUseSessionStorage(): boolean {
   return typeof window !== "undefined" && typeof window.sessionStorage !== "undefined";
 }
@@ -136,10 +109,8 @@ function persistServicesStore(nextStore: Service[]): void {
   }
 }
 
-/** The in-memory "database". Loaded from sessionStorage (or seed data on first visit). */
 let servicesStore: Service[] = loadServicesStore();
 
-/** Helper that attaches an ID to a service payload to create a full Service record. */
 const createServiceEntity = (
   payload: Omit<Service, "id">,
   id: number,
@@ -148,12 +119,6 @@ const createServiceEntity = (
   ...payload,
 });
 
-/*
- * ---------- CRUD operations ----------
- * These mirror the function signatures you would use with a real REST API.
- */
-
-/** Returns all services, wrapped in a paginated response shape. */
 export async function listServices(): Promise<PaginatedApiResponse<Service>> {
   await mockDelay();
   return {
@@ -168,7 +133,6 @@ export async function listServices(): Promise<PaginatedApiResponse<Service>> {
   };
 }
 
-/** Finds a single service by its numeric ID. Throws if not found. */
 export async function getServiceById(id: number): Promise<ApiResponse<Service>> {
   await mockDelay();
   const service = servicesStore.find((item) => item.id === id);
@@ -183,7 +147,6 @@ export async function getServiceById(id: number): Promise<ApiResponse<Service>> 
   };
 }
 
-/** Creates a new service and persists the updated list to sessionStorage. */
 export async function createService(
   payload: Omit<Service, "id">,
 ): Promise<ApiResponse<Service>> {
@@ -202,7 +165,6 @@ export async function createService(
   };
 }
 
-/** Updates an existing service by merging provided fields, then persists. */
 export async function updateService(
   payload: Partial<Service> & { id: number },
 ): Promise<ApiResponse<Service>> {
@@ -228,7 +190,6 @@ export async function updateService(
   };
 }
 
-/** Removes a service from the store and persists the change. */
 export async function deleteService(id: number): Promise<{ success: true; data: { id: number } }> {
   await mockDelay();
   servicesStore = servicesStore.filter((item) => item.id !== id);
@@ -240,7 +201,6 @@ export async function deleteService(id: number): Promise<{ success: true; data: 
   };
 }
 
-/** Convenience wrapper that updates only the status field of a service. */
 export async function setServiceStatus(
   id: number,
   status: ServiceStatus,
@@ -248,21 +208,15 @@ export async function setServiceStatus(
   return updateService({ id, status });
 }
 
-/** Exposes the raw mock store for use in tests or debugging. */
 export function getServicesMockStore(): Service[] {
   return servicesStore;
 }
 
-/** Replaces the entire mock store and persists -- useful for resetting state in tests. */
 export function resetServicesMockStore(services: Service[]): void {
   servicesStore = services;
   persistServicesStore(servicesStore);
 }
 
-/** Restores the mock store to the original seed data and clears sessionStorage. */
 export function resetServicesToDefaults(): void {
   resetServicesMockStore([...seededServicesStore]);
 }
-
-
-

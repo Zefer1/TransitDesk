@@ -1,19 +1,7 @@
-/**
- * Mock API for Drivers.
- *
- * This file pretends to be a real backend server. Each function waits a short
- * random delay (to mimic network latency) and then reads or writes to an
- * in-memory array instead of a database.
- *
- * When the real backend is ready, you will replace these functions with actual
- * HTTP calls (using Axios) while keeping the same function signatures so that
- * the rest of the app does not need to change.
- */
 import type { Driver } from "../types/service.types";
 import type { ApiResponse, PaginatedApiResponse } from "../types/api.types";
 import { mockDelay } from "./mockDelay";
 
-/** Seed data -- the drivers that exist when the app first loads. */
 const initialDrivers: Driver[] = [
 	{
 		id: 1,
@@ -41,13 +29,8 @@ const initialDrivers: Driver[] = [
 	},
 ];
 
-/**
- * The "database" -- a mutable array that holds the current list of drivers.
- * We copy initialDrivers so we can reset back to the original data later.
- */
 let driversStore: Driver[] = [...initialDrivers];
 
-/** Returns all drivers, wrapped in a paginated response shape. */
 export async function listDrivers(): Promise<PaginatedApiResponse<Driver>> {
 	await mockDelay();
 	return {
@@ -62,7 +45,6 @@ export async function listDrivers(): Promise<PaginatedApiResponse<Driver>> {
 	};
 }
 
-/** Finds a single driver by its numeric ID. Throws if not found. */
 export async function getDriverById(id: number): Promise<ApiResponse<Driver>> {
 	await mockDelay();
 	const driver = driversStore.find((item) => item.id === id);
@@ -72,7 +54,6 @@ export async function getDriverById(id: number): Promise<ApiResponse<Driver>> {
 	return { success: true, data: driver };
 }
 
-/** Creates a new driver. Auto-generates an ID by taking the highest existing ID + 1. */
 export async function createDriver(payload: Omit<Driver, "id">): Promise<ApiResponse<Driver>> {
 	await mockDelay();
 	const id = driversStore.length ? Math.max(...driversStore.map((item) => item.id)) + 1 : 1;
@@ -81,7 +62,6 @@ export async function createDriver(payload: Omit<Driver, "id">): Promise<ApiResp
 	return { success: true, data: created };
 }
 
-/** Updates an existing driver by merging the provided fields into the stored record. */
 export async function updateDriver(payload: Partial<Driver> & { id: number }): Promise<ApiResponse<Driver>> {
 	await mockDelay();
 	const index = driversStore.findIndex((item) => item.id === payload.id);
@@ -93,24 +73,20 @@ export async function updateDriver(payload: Partial<Driver> & { id: number }): P
 	return { success: true, data: updated };
 }
 
-/** Removes a driver from the store by filtering it out. */
 export async function deleteDriver(id: number): Promise<{ success: true; data: { id: number } }> {
 	await mockDelay();
 	driversStore = driversStore.filter((item) => item.id !== id);
 	return { success: true, data: { id } };
 }
 
-/** Exposes the raw mock store for use in tests or debugging. */
 export function getDriversMockStore(): Driver[] {
 	return driversStore;
 }
 
-/** Replaces the entire mock store -- useful for resetting state in tests. */
 export function resetDriversMockStore(items: Driver[]): void {
 	driversStore = items;
 }
 
-/** Restores the mock store to the original seed data. */
 export function resetDriversToDefaults(): void {
 	resetDriversMockStore([...initialDrivers]);
 }

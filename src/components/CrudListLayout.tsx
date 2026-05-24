@@ -1,15 +1,3 @@
-/**
- * Reusable list page layout for CRUD modules (Services, Drivers, Vehicles, Guides).
- *
- * Every list page in the app needs to handle the same set of states:
- *  - Loading: show skeleton placeholders while data is being fetched
- *  - Error: show an error message with an optional "Retry" button
- *  - Empty: show a friendly message when there are no items to display
- *  - Normal: show the page header, optional filter bar, and the data table/cards
- *
- * This component handles all of that so each feature page only needs to pass in
- * its data and configuration, rather than re-implementing loading/error/empty UI.
- */
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { EmptyState } from "./EmptyState";
@@ -44,10 +32,6 @@ type CrudListLayoutProps = {
 	loadingLabel?: string;
 };
 
-/**
- * The skeleton that appears while data is loading. Shows card skeletons on
- * mobile and a table skeleton on larger screens (responsive design).
- */
 function DefaultLoadingBlock() {
 	return (
 		<>
@@ -154,6 +138,3 @@ export function CrudListLayout({
 		</section>
 	);
 }
-
-
-

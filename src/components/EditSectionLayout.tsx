@@ -1,9 +1,4 @@
-/** Shared page layout for edit views. Renders a title, description, and a white card wrapper. */
 import type { ReactNode } from "react";
-
-// Core flow note: the block below contains the main behavior used by this module.
-
-// Provides a consistent edit-page shell so feature forms share the same visual structure.
 
 type EditSectionLayoutProps = {
 	title: string;
@@ -25,6 +20,3 @@ export function EditSectionLayout({ title, description, children }: EditSectionL
 		</section>
 	);
 }
-
-
-
