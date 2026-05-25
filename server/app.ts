@@ -5,6 +5,7 @@ import driversRouter from './routes/drivers.js';
 import authRouter from './routes/auth.js';
 import vehiclesRouter from './routes/vehicles.js';
 import guidesRouter from './routes/guides.js';
+import servicesRouter from './routes/services.js';
 
 const app = express();
 const PORT = 3001;
@@ -20,6 +21,7 @@ app.use('/api/auth', authRouter);
 app.use('/api', driversRouter);
 app.use('/api', vehiclesRouter);
 app.use('/api', guidesRouter);
+app.use('/api', servicesRouter);
 
 app.use((err: Error, _req: Request, res: Response, next: NextFunction) => {
     void next;
