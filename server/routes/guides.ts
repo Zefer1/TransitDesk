@@ -4,56 +4,56 @@ import { requireAuth } from "../middleware/requireAuth.js";
 
 const router = Router();
 
-router.get("/drivers", requireAuth, async (req, res) => {
+router.get("/guides", requireAuth, async (req, res) => {
     try {
-        const drivers = await prisma.driver.findMany({
+        const guides = await prisma.guide.findMany({
             orderBy: { createdAt: "desc" },
         });
-        res.json({ success: true, data: drivers });
+        res.json({ success: true, data: guides });
     } catch (error) {
         res.status(500).json({ success: false, error: "Internal server error" });
     }
 });
 
-router.get("/drivers/:id", requireAuth, async (req, res) => {
+router.get("/guides/:id", requireAuth, async (req, res) => {
     try {
-        const driver = await prisma.driver.findUnique({
+        const guide = await prisma.guide.findUnique({
             where: { id: Number(req.params.id) },
         });
-        if (!driver) {
-            res.status(404).json({ success: false, error: "Driver not found" });
+        if (!guide) {
+            res.status(404).json({ success: false, error: "Guide not found" });
             return;
         }
-        res.json({ success: true, data: driver });
+        res.json({ success: true, data: guide });
     } catch (error) {
         res.status(500).json({ success: false, error: "Internal server error" });
     }
 });
 
-router.post("/drivers", requireAuth, async (req, res) => {
+router.post("/guides", requireAuth, async (req, res) => {
     try {
-        const driver = await prisma.driver.create({ data: req.body });
-        res.status(201).json({ success: true, data: driver });
+        const guide = await prisma.guide.create({ data: req.body });
+        res.status(201).json({ success: true, data: guide });
     } catch (error) {
         res.status(500).json({ success: false, error: "Internal server error" });
     }
 });
 
-router.put("/drivers/:id", requireAuth, async (req, res) => {
+router.put("/guides/:id", requireAuth, async (req, res) => {
     try {
-        const driver = await prisma.driver.update({
+        const guide = await prisma.guide.update({
             where: { id: Number(req.params.id) },
             data: req.body,
         });
-        res.json({ success: true, data: driver });
+        res.json({ success: true, data: guide });
     } catch (error) {
         res.status(500).json({ success: false, error: "Internal server error" });
     }
 });
 
-router.delete("/drivers/:id", requireAuth, async (req, res) => {
+router.delete("/guides/:id", requireAuth, async (req, res) => {
     try {
-        await prisma.driver.delete({
+        await prisma.guide.delete({
             where: { id: Number(req.params.id) },
         });
         res.json({ success: true, data: { id: Number(req.params.id) } });
