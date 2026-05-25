@@ -1,18 +1,3 @@
-/**
- * DriversListPage.tsx
- *
- * The main listing page for drivers. Here is what happens when it loads:
- *   1. It fetches all drivers from the API.
- *   2. The raw list is passed to the useDriverFilters hook, which provides
- *      filter state and a filtered subset of drivers.
- *   3. The DriverFiltersBar lets users narrow results by search, license, or vehicle type.
- *   4. The DriverTable displays whichever drivers match the current filters.
- *
- * There are three possible empty states:
- *   - Still loading: a loading spinner is shown by CrudListLayout.
- *   - No drivers exist at all: a prompt to create the first driver.
- *   - Drivers exist but none match filters: a prompt to reset filters.
- */
 import { useEffect, useState } from "react";
 import { CrudListLayout } from "../../../components/CrudListLayout";
 import { EmptyState } from "../../../components/EmptyState";
@@ -83,7 +68,6 @@ export function DriversListPage() {
 		};
 	}, [addToast, reloadKey]);
 
-	/** Bumping reloadKey causes the useEffect above to re-run and fetch fresh data. */
 	const handleRetry = () => {
 		setReloadKey((current) => current + 1);
 	};
