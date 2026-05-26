@@ -1,6 +1,8 @@
 import { Router } from "express";
 import prisma from "../lib/prisma.js";
 import { requireAuth } from "../middleware/requireAuth.js";
+import { validate } from "../middleware/validate.js";
+import { serviceCreateSchema, serviceUpdateSchema, serviceStatusSchema } from "../schemas/services.schema.js";
 
 const router = Router();
 
@@ -47,7 +49,7 @@ router.get("/services/:id", requireAuth, async (req, res) => {
     }
 });
 
-router.post("/services", requireAuth, async (req, res) => {
+router.post("/services", requireAuth, validate(serviceCreateSchema), async (req, res) => {
     try {
         const { vehicle, driver, guide, ...rest } = req.body;
         const userId = (req as any).user.id;
@@ -67,7 +69,7 @@ router.post("/services", requireAuth, async (req, res) => {
     }
 });
 
-router.put("/services/:id", requireAuth, async (req, res) => {
+router.put("/services/:id", requireAuth, validate(serviceUpdateSchema), async (req, res) => {
     try {
         const { vehicle, driver, guide, ...rest } = req.body;
         const userId = (req as any).user.id;
@@ -87,7 +89,7 @@ router.put("/services/:id", requireAuth, async (req, res) => {
     }
 });
 
-router.patch("/services/:id/status", requireAuth, async (req, res) => {
+router.patch("/services/:id/status", requireAuth, validate(serviceStatusSchema), async (req, res) => {
     try {
         const { status } = req.body;
         const userId = (req as any).user.id;
