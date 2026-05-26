@@ -3,6 +3,8 @@ import bcrypt from "bcrypt";
 import prisma from "../lib/prisma.js";
 import { requireAuth } from "../middleware/requireAuth.js";
 import { requireAdmin } from "../middleware/requireAdmin.js";
+import { validate } from "../middleware/validate.js";
+import { userCreateSchema, userUpdateSchema } from "../schemas/users.schema.js";
 
 const router = Router();
 
@@ -20,7 +22,7 @@ router.get("/users", requireAuth, requireAdmin, async (req, res) => {
     }
 });
 
-router.post("/users", requireAuth, requireAdmin, async (req, res) => {
+router.post("/users", requireAuth, requireAdmin, validate(userCreateSchema), async (req, res) => {
     try {
         const { username, password, name, role } = req.body;
         const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
@@ -35,7 +37,7 @@ router.post("/users", requireAuth, requireAdmin, async (req, res) => {
     }
 });
 
-router.patch("/users/:id", requireAuth, requireAdmin, async (req, res) => {
+router.patch("/users/:id", requireAuth, requireAdmin, validate(userUpdateSchema), async (req, res) => {
     try {
         const { name, password } = req.body;
         const data: any = {};
