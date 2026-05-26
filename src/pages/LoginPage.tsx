@@ -10,12 +10,12 @@ export function LoginPage() {
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
 
-    async function handleSubmit(e: React.FormEvent) {
+    async function handleSubmit(e: SubmitEvent) {
         e.preventDefault();
         setError(null);
         setLoading(true);
         try {
-            const { token, user } = await login(username, password);
+            const { token, user } = await login(username.trim(), password);
             localStorage.setItem("token", token);
             localStorage.setItem("user", JSON.stringify(user));
             navigate(APP_ROUTES.services, { replace: true });
