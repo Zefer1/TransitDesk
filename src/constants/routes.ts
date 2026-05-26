@@ -14,5 +14,6 @@ export const APP_ROUTES = {
   newGuide: '/guides/new',
   guideDetail: '/guides/:id',
   settings: '/settings',
+  login: '/login',
   notFound: '*',
 } as const;
