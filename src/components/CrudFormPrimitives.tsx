@@ -1,32 +1,6 @@
-/**
- * Reusable form building blocks for CRUD (Create, Read, Update, Delete) forms.
- *
- * Instead of writing raw <input>, <select>, and <textarea> elements every time
- * you build a form, you use these components. They handle a lot of things for you:
- *
- *  - Each input gets a unique ID automatically (via React's useId hook), so you
- *    never have to come up with IDs yourself.
- *  - Accessibility is built in: screen readers are told when a field is invalid,
- *    and hint/error messages are linked to inputs via aria-describedby.
- *  - Error styling (red borders) and normal styling (blue focus ring) are
- *    applied consistently through the shared `inputClassName` helper.
- *
- * Components exported from this file:
- *  - CrudForm           -- the <form> wrapper (disables native browser validation)
- *  - CrudFormSection    -- a titled card that groups related fields together
- *  - CrudTextInput      -- a text/number/date/tel input with label, hint, and error
- *  - CrudSelectInput    -- a dropdown select with the same label/hint/error pattern
- *  - CrudTextAreaInput  -- a multi-line text area with the same pattern
- *  - CrudFormActions    -- Submit and Cancel buttons at the bottom of the form
- */
 import { useId } from "react";
 import { Link } from "react-router-dom";
 
-/**
- * Returns the right CSS classes for an input's border color.
- * If there is a validation error, the border turns red; otherwise it is gray
- * with a blue ring when focused.
- */
 function inputClassName(hasError: boolean): string {
 	return [
 		"w-full rounded-md border px-3 py-2 text-sm text-gray-900 dark:text-white shadow-sm outline-none transition dark:bg-gray-800",
@@ -36,10 +10,6 @@ function inputClassName(hasError: boolean): string {
 	].join(" ");
 }
 
-/**
- * Builds the value for the aria-describedby attribute by joining the hint and
- * error element IDs. Screen readers use this to announce extra info about a field.
- */
 function describedBy(hintId?: string, errorId?: string): string | undefined {
 	const ids = [hintId, errorId].filter(Boolean);
 	return ids.length > 0 ? ids.join(" ") : undefined;
@@ -312,6 +282,3 @@ export function CrudFormActions({
 		</div>
 	);
 }
-
-
-

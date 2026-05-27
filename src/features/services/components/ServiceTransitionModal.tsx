@@ -1,16 +1,3 @@
-/**
- * ServiceTransitionModal.tsx
- *
- * A confirmation dialog that appears when the user wants to change a service's status
- * (e.g. from "scheduled" to "ongoing", or from "ongoing" to "cancelled").
- *
- * When cancelling a service, the modal shows an extra text area where the user
- * must type a reason before confirming. For other transitions, the user just
- * clicks "Confirm transition".
- *
- * The modal also displays any transition errors (e.g. if the API call fails)
- * and disables the buttons while a transition is in progress.
- */
 import { useState } from "react";
 import type { ServiceStatus } from "../../../types/service.types";
 

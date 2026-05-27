@@ -1,12 +1,9 @@
-/** Fetches available vehicles, drivers, and guides for ServiceForm dropdowns. Also provides stale-data warnings via useStaleServiceAssignmentWarnings. */
 import { useEffect, useMemo, useState } from "react";
 
 import { listDrivers } from "../../../api/drivers.api";
 import { listGuides } from "../../../api/guides.api";
 import { listVehicles } from "../../../api/vehicles.api";
 import type { Driver, Guide, Vehicle } from "../../../types/service.types";
-
-// Fetches assignment candidates and exposes normalized option state for service form selectors.
 
 type UseServiceAssignmentOptionsResult = {
 	vehicleOptions: Vehicle[];

@@ -1,9 +1,4 @@
-/** Toast context and hook. Use `useToast()` inside a `ToastProvider` to show notifications. */
 import { createContext, useContext } from "react";
-
-// Core flow note: the block below contains the main behavior used by this module.
-
-// Exposes toast context as a hook and enforces provider usage boundaries.
 
 export type ToastType = "success" | "error" | "info";
 
@@ -21,6 +16,3 @@ export function useToast(): ToastContextValue {
 
 	return ctx;
 }
-
-
-

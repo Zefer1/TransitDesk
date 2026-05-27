@@ -1,4 +1,3 @@
-/** Service detail page with view, inline edit, status transitions, and delete. */
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { ServiceForm } from "../components/ServiceForm";
@@ -13,8 +12,6 @@ import type { ValidatedServiceCreateValues } from "../schemas/serviceForm.schema
 import { formatDateTime } from "../utils/serviceFormatters";
 import { useServiceStatusTransition } from "../hooks/useServiceStatusTransition";
 import { ServicePrintSheet } from "../components/ServicePrintSheet";
-
-// Orchestrates service view/edit/transition/delete flows around shared hooks and components.
 
 export function ServiceDetailPage() {
 	const navigate = useNavigate();
@@ -211,8 +208,6 @@ export function ServiceDetailPage() {
 							</button>
 						)}
 
-						{/* Triggers the browser's print dialog. ServicePrintSheet (hidden on screen)
-						    becomes the only visible content when printing. */}
 						<button
 							type="button"
 							onClick={() => window.print()}
@@ -257,8 +252,6 @@ export function ServiceDetailPage() {
 				/>
 			) : null}
 
-			{/* Always in the DOM when a service is loaded, but hidden on screen.
-			    Becomes visible only when the browser prints (see ServicePrintSheet.css). */}
 			<ServicePrintSheet service={service} />
 		</section>
 	);

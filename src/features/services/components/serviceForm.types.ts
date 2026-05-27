@@ -1,18 +1,3 @@
-/**
- * serviceForm.types.ts
- *
- * All the TypeScript types used by the service form and its related components.
- * This file acts as a single source of truth for the shape of:
- *
- * - ServiceFormState: what the form stores internally (all strings for controlled inputs)
- * - ServiceFormProps: what the parent page passes to the ServiceForm component
- * - ServiceFormErrors: a flat map of field paths to error messages
- * - ServiceFormMode: whether the form is in "create" or "edit" mode
- * - AssignmentOption: the { value, label } shape used by entity dropdowns
- *
- * Having all these types in one place makes it easy to see the full picture
- * of how data flows through the form.
- */
 import type {
 	Driver,
 	Gender,

@@ -1,14 +1,3 @@
-/**
- * GuideFiltersBar.tsx
- *
- * Renders the filter controls shown above the guides table on the list page.
- * It provides a text search input (filters by name or phone) and a language
- * dropdown so the user can narrow the visible guides.
- *
- * This is a "controlled" component -- it does not own any state itself.
- * The parent (GuidesListPage) holds the filter state via the useGuideFilters
- * hook and passes it down here along with callback functions to update it.
- */
 import type { GuideFiltersState } from "../../../hooks/useGuideFilters";
 
 type GuideFiltersBarProps = {
@@ -68,6 +57,3 @@ export function GuideFiltersBar({
 		</div>
 	);
 }
-
-
-

@@ -1,10 +1,5 @@
-/** Centered empty-state display with optional icon and action button/link. */
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
-
-// Core flow note: the block below contains the main behavior used by this module.
-
-// Reusable fallback UI for empty results and no-data scenarios across feature pages.
 
 type EmptyStateAction = {
 	label: string;
@@ -65,6 +60,3 @@ export function EmptyState({ title, description, action, icon }: EmptyStateProps
 		</div>
 	);
 }
-
-
-

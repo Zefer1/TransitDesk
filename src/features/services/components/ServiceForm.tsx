@@ -1,19 +1,3 @@
-/**
- * ServiceForm.tsx
- *
- * The main "orchestrator" component for creating or editing a service.
- * Think of it as the brain of the form -- it does NOT render individual fields itself.
- * Instead, it:
- *
- * 1. Sets up the form state (via useServiceFormState hook)
- * 2. Loads the dropdown options for vehicles, drivers, and guides (via useServiceAssignmentOptions)
- * 3. Handles form submission: validates with Zod, checks status transition rules, then calls the API
- * 4. Delegates the actual field rendering to section components (ServiceDetailsSection, VehicleSection, etc.)
- *
- * It supports two modes:
- * - "create" mode: empty form, all fields editable
- * - "edit" mode: pre-filled from existing service data, locked if the service is completed/cancelled
- */
 import { useMemo, useState } from "react";
 import { canTransition } from "../../../constants/serviceStatuses";
 import { SERVICE_STATUSES } from "../../../types/service.types";
@@ -50,17 +34,11 @@ export function ServiceForm({
 	validationSchema = serviceCreateSchema,
 	mode,
 }: ServiceFormProps) {
-	// Figure out whether we are creating or editing, and whether the form should be locked.
-	// A service that is already "completed" or "cancelled" cannot be changed -- its fields
-	// become read-only. We use the ORIGINAL status (not one the user might pick in the form)
-	// to decide this, so changing the status dropdown does not unlock the form.
 	const resolvedMode: ServiceFormMode = mode ?? (initialData ? "edit" : "create");
 	const initialStatus = initialData?.status ?? "scheduled";
 	const isLockedByStatus =
 		resolvedMode === "edit" && (initialStatus === "completed" || initialStatus === "cancelled");
 
-	// Build the starting values for the form once. useMemo ensures we do not rebuild
-	// (and reset the form) on every parent re-render -- only when initialData actually changes.
 	const initialState = useMemo(() => buildInitialServiceFormState(initialData), [initialData]);
 
 	const {
@@ -80,13 +58,9 @@ export function ServiceForm({
 	const [errors, setErrors] = useState<ServiceFormErrors>({});
 	const [submitError, setSubmitError] = useState<string | null>(null);
 
-	// Fetch the lists of available vehicles, drivers, and guides for the dropdown selectors.
-	// These are loaded once when the form mounts and shared across all sections.
 	const { vehicleOptions, driverOptions, guideOptions, isLoadingAssignments, assignmentError } =
 		useServiceAssignmentOptions();
 
-	// In edit mode, warn the user if the originally assigned vehicle/driver/guide no longer
-	// exists in the current options (e.g. it was deleted since the service was created).
 	const { staleVehicleWarning, staleDriverWarning, staleGuideWarning } =
 		useStaleServiceAssignmentWarnings({
 			initialVehicleId: initialData?.vehicle?.id,
@@ -97,8 +71,6 @@ export function ServiceForm({
 			guideOptions,
 		});
 
-	// Transform the raw entity arrays into the { value, label } format that our
-	// dropdown components expect. useMemo avoids re-creating these on every render.
 	const vehicleSelectOptions = useMemo(
 		() =>
 			vehicleOptions.map((vehicle) => ({
@@ -128,9 +100,6 @@ export function ServiceForm({
 		[guideOptions],
 	);
 
-	// When editing, the status dropdown only shows statuses that are valid transitions
-	// from the original status. For example, a "scheduled" service can become "ongoing"
-	// or "cancelled", but not jump straight to "completed".
 	const statusOptions = useMemo(
 		() =>
 			SERVICE_STATUSES.filter(
@@ -139,8 +108,6 @@ export function ServiceForm({
 		[initialStatus, resolvedMode],
 	);
 
-	// When the user starts typing in a field that had a validation error, clear that
-	// error immediately so they get instant feedback that their correction was noticed.
 	const clearFieldError = (path: string) => {
 		setErrors((current) => {
 			if (!current[path]) {
@@ -153,8 +120,6 @@ export function ServiceForm({
 		});
 	};
 
-	// When the user picks a vehicle/driver/guide from the dropdown, fill in all the related
-	// fields automatically and clear any validation errors on those fields.
 	const applySelectedVehicle = (vehicleId: string) => {
 		applyVehicle(vehicleId, vehicleOptions);
 		clearFieldError("vehicle");
@@ -173,11 +138,6 @@ export function ServiceForm({
 		clearFieldError("guide.id");
 	};
 
-	// The submit handler runs through several safety checks in order:
-	// 1. Block submission if the service is locked (completed/cancelled)
-	// 2. Validate all fields against the Zod schema
-	// 3. In edit mode, verify the status change is an allowed transition
-	// 4. If everything passes, call the parent's onSubmit callback (which hits the API)
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		setSubmitError(null);

@@ -1,13 +1,5 @@
-/**
- * Toast notification system.
- *
- * `ToastProvider` wraps the app and exposes `addToast(message, type)` via context.
- * Toasts auto-dismiss after 4 seconds. Types: "success" (green), "error" (red), "info" (dark).
- */
 import { useCallback, useRef, useState } from "react";
 import { ToastContext, type ToastType } from "./useToast";
-
-// Manages toast lifecycle: enqueue, auto-dismiss, and stacked rendering.
 
 type Toast = {
 	id: number;
@@ -96,6 +88,3 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
 		</ToastContext.Provider>
 	);
 }
-
-
-

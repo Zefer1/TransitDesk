@@ -1,4 +1,3 @@
-/** Zod schema for service create validation. Validates all fields including nested vehicle, driver, and optional guide. */
 import { z } from "zod";
 
 import {

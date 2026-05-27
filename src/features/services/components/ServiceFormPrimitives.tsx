@@ -1,24 +1,8 @@
-/**
- * ServiceFormPrimitives.tsx
- *
- * Reusable, low-level form building blocks used by ServiceFormSections.
- * Each primitive handles one common input pattern (text field, dropdown, textarea, etc.)
- * and takes care of styling, error display, and accessibility labels.
- *
- * These components do NOT know anything about services or business logic --
- * they are generic input wrappers that could be used in any form.
- * The service-specific sections (ServiceFormSections.tsx) compose these primitives
- * and wire them up to the actual form state.
- */
 import type { ReactNode } from "react";
 
 import { helpTextClassName, sectionTitleClassName } from "./serviceForm.styles";
 import type { AssignmentOption } from "./serviceForm.types";
 
-/**
- * Returns the appropriate Tailwind classes for an input field.
- * Shows a red border when there is a validation error, blue border when focused normally.
- */
 function inputClassName(hasError: boolean): string {
 	return [
 		"w-full rounded-md border px-3 py-2 text-sm text-gray-900 dark:text-white dark:bg-gray-800 shadow-sm outline-none transition",
@@ -28,11 +12,6 @@ function inputClassName(hasError: boolean): string {
 	].join(" ");
 }
 
-/**
- * A card wrapper that groups related fields together with a title and description.
- * Each major section of the form (Service details, Vehicle, Driver, Guide) is
- * wrapped in one of these.
- */
 export function Section({
 	title,
 	description,
@@ -53,7 +32,6 @@ export function Section({
 	);
 }
 
-// Small helper that shows a red error message below a field (only when there is one).
 function FieldError({ message }: { message?: string }) {
 	if (!message) {
 		return null;
@@ -79,8 +57,6 @@ export function TextInput({
 	placeholder?: string;
 	disabled?: boolean;
 }) {
-	// Standard single-line input. Works for text, numbers, dates, and phone numbers
-	// depending on the "type" prop passed in.
 	return (
 		<label className="flex flex-col gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
 			<span>{label}</span>
@@ -114,7 +90,6 @@ export function SelectInput({
 	placeholder: string;
 	disabled?: boolean;
 }) {
-	// Dropdown for picking from a fixed list of string values (like service type or gender).
 	return (
 		<label className="flex flex-col gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
 			<span>{label}</span>
@@ -151,7 +126,6 @@ export function TextAreaInput({
 	rows?: number;
 	placeholder?: string;
 }) {
-	// Multi-line text area for longer content like notes or descriptions.
 	return (
 		<label className="flex flex-col gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
 			<span>{label}</span>
@@ -186,9 +160,6 @@ export function AssignmentSelectInput({
 	disabled?: boolean;
 	helpText?: string;
 }) {
-	// Specialized dropdown for picking an entity (vehicle, driver, or guide).
-	// Unlike SelectInput, this uses { value, label } option objects and supports
-	// an optional help text hint below the dropdown.
 	return (
 		<label className="flex flex-col gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
 			<span>{label}</span>

@@ -1,10 +1,15 @@
-/** Top navigation bar with logo, nav links, and a "New Service" action button. */
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { APP_ROUTES } from '../constants/routes';
-
-// Top-level navigation links below reflect the app information architecture.
+import { clearAuth } from '../lib/auth';
 
 export function AppHeader() {
+  const navigate = useNavigate();
+
+  function handleLogout() {
+    clearAuth();
+    navigate(APP_ROUTES.login);
+  }
+
   return (
     <nav className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -73,12 +78,20 @@ export function AppHeader() {
               </NavLink>
             </div>
           </div>
-          <Link
-            to={APP_ROUTES.newService}
-            className="inline-flex w-full items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 sm:w-auto"
-          >
-            + New Service
-          </Link>
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <Link
+              to={APP_ROUTES.newService}
+              className="inline-flex flex-1 items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 sm:flex-none"
+            >
+              + New Service
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="inline-flex items-center justify-center rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 transition hover:bg-gray-100 dark:hover:bg-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+            >
+              Logout
+            </button>
+          </div>
         </div>
       </div>
     </nav>
