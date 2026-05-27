@@ -9,10 +9,10 @@ import servicesRouter from './routes/services.js';
 import usersRouter from './routes/users.js';
 
 const app = express();
-const PORT = 3001;
+const PORT = Number(process.env.PORT) || 3001;
 
 app.use(express.json());
-app.use(cors({ origin: 'http://localhost:5173' }));
+app.use(cors({ origin: process.env.CORS_ORIGIN || 'http://localhost:5173' }));
 
 app.get('/api/health', (_req, res) => {
     res.json({ status: 'ok' });
