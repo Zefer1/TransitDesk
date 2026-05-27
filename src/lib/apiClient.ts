@@ -2,7 +2,7 @@ import axios from "axios";
 import { clearAuth, getToken } from "./auth";
 
 const apiClient = axios.create({
-    baseURL: "http://localhost:3001/api",
+    baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:3001/api",
 });
 
 apiClient.interceptors.request.use((config) => {
