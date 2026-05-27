@@ -1,21 +1,4 @@
-/**
- * VehicleDetailPage.tsx
- *
- * The main detail page for a single vehicle. It supports three modes:
- *
- *   1. View mode (default): shows the vehicle's info in read-only cards
- *   2. Inline edit mode: swaps the view for the VehicleForm so users can
- *      edit without leaving the page
- *   3. Delete flow: opens a confirmation modal, but first checks whether
- *      the vehicle has any active service assignments (scheduled or ongoing).
- *      If it does, deletion is blocked to prevent breaking live services.
- *
- * This page composes several custom hooks:
- *   - useLoadVehicle:        fetches the vehicle data by ID
- *   - useVehicleAssignments: checks for active service assignments
- *   - useSaveVehicle:        handles the update API call
- */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useToast } from "../../../components/useToast";
 import { APP_ROUTES } from "../../../constants/routes";
@@ -24,28 +7,137 @@ import { VehicleDetailContent } from "../components/VehicleDetailContent";
 import { EntityHeaderActions } from "../../../components/EntityHeaderActions";
 import { EntityDeleteModal } from "../../../components/EntityDeleteModal";
 import { EditSectionLayout } from "../../../components/EditSectionLayout";
-import { deleteVehicle } from "../../../api/vehicles.api";
+import { getVehicleById, updateVehicle, deleteVehicle } from "../../../api/vehicles.api";
+import { listServices } from "../../../api/services.api";
+import type { Vehicle } from "../../../types/service.types";
 import type { ValidatedVehicleUpdateValues } from "../schemas/vehicleForm.schema";
-import { useLoadVehicle } from "../hooks/useLoadVehicle";
-import { useVehicleAssignments } from "../hooks/useVehicleAssignments";
-import { useSaveVehicle } from "../hooks/useSaveVehicle";
-
 
 export function VehicleDetailPage() {
 	const navigate = useNavigate();
 	const { id } = useParams<{ id: string }>();
 	const { addToast } = useToast();
+
+	const [vehicle, setVehicle] = useState<Vehicle | null>(null);
+	const [isLoading, setIsLoading] = useState(true);
+	const [errorMessage, setErrorMessage] = useState<string | null>(null);
+	const [reloadKey, setReloadKey] = useState(0);
+
 	const [isEditing, setIsEditing] = useState(false);
+	const [isSaving, setIsSaving] = useState(false);
+
 	const [isShowingDeleteConfirm, setIsShowingDeleteConfirm] = useState(false);
 	const [isDeleting, setIsDeleting] = useState(false);
 
-	// Load the vehicle, check its assignments, and prepare the save function
-	const vehicleId = Number(id);
-	const { vehicle, setVehicle, isLoading, errorMessage, reload } = useLoadVehicle(vehicleId);
-	const { activeAssignments, isCheckingAssignments, assignmentCheckError, refreshAssignments } = useVehicleAssignments(vehicle?.id ?? null);
-	const { isSaving, saveVehicle } = useSaveVehicle();
+	const [activeAssignments, setActiveAssignments] = useState(0);
+	const [isCheckingAssignments, setIsCheckingAssignments] = useState(false);
+	const [assignmentCheckError, setAssignmentCheckError] = useState<string | null>(null);
 
-	// While the vehicle data is being fetched, show a placeholder skeleton
+	const vehicleId = Number(id);
+	const hasValidId = Number.isInteger(vehicleId) && vehicleId > 0;
+
+	useEffect(() => {
+		if (!hasValidId) {
+			setIsLoading(false);
+			setErrorMessage("Invalid vehicle ID.");
+			return;
+		}
+
+		let cancelled = false;
+
+		async function fetchVehicle() {
+			try {
+				setIsLoading(true);
+				setErrorMessage(null);
+				const response = await getVehicleById(vehicleId);
+				if (!cancelled) setVehicle(response.data);
+			} catch (error) {
+				if (!cancelled) {
+					const message = error instanceof Error ? error.message : "Unable to load vehicle.";
+					setErrorMessage(message);
+				}
+			} finally {
+				if (!cancelled) setIsLoading(false);
+			}
+		}
+
+		fetchVehicle();
+		return () => { cancelled = true; };
+	}, [vehicleId, hasValidId, reloadKey]);
+
+	useEffect(() => {
+		if (!vehicle) return;
+
+		let cancelled = false;
+
+		async function checkAssignments() {
+			setIsCheckingAssignments(true);
+			setAssignmentCheckError(null);
+			try {
+				const response = await listServices();
+				if (!cancelled) {
+					const count = response.data.filter(
+						s => s.vehicle.id === vehicle!.id &&
+						(s.status === "scheduled" || s.status === "ongoing")
+					).length;
+					setActiveAssignments(count);
+				}
+			} catch {
+				if (!cancelled) setAssignmentCheckError("Unable to verify active assignments right now.");
+			} finally {
+				if (!cancelled) setIsCheckingAssignments(false);
+			}
+		}
+
+		checkAssignments();
+		return () => { cancelled = true; };
+	}, [vehicle]);
+
+	async function handleSave(values: ValidatedVehicleUpdateValues) {
+		setIsSaving(true);
+		try {
+			const response = await updateVehicle(values);
+			setVehicle(response.data);
+			setIsEditing(false);
+			addToast("Vehicle updated successfully", "success");
+		} catch (error) {
+			const message = error instanceof Error ? error.message : "Failed to update vehicle";
+			addToast(message, "error");
+		} finally {
+			setIsSaving(false);
+		}
+	}
+
+	async function handleDelete() {
+		if (assignmentCheckError) {
+			addToast("Please retry assignment check before deleting this vehicle.", "error");
+			return;
+		}
+
+		setIsDeleting(true);
+		try {
+			const response = await listServices();
+			const count = response.data.filter(
+				s => s.vehicle.id === vehicle!.id &&
+				(s.status === "scheduled" || s.status === "ongoing")
+			).length;
+
+			if (count > 0) {
+				setActiveAssignments(count);
+				addToast("Cannot delete vehicle while it has active service assignments.", "error");
+				return;
+			}
+
+			await deleteVehicle(vehicle!.id);
+			addToast("Vehicle deleted successfully", "success");
+			navigate(APP_ROUTES.vehicles);
+		} catch (error) {
+			const message = error instanceof Error ? error.message : "Failed to delete vehicle";
+			addToast(message, "error");
+		} finally {
+			setIsDeleting(false);
+		}
+	}
+
 	if (isLoading) {
 		return (
 			<section className="space-y-6" aria-busy="true" aria-live="polite">
@@ -58,7 +150,6 @@ export function VehicleDetailPage() {
 		);
 	}
 
-	// If fetching failed or the vehicle was not found, show an error with a retry button
 	if (errorMessage || !vehicle) {
 		return (
 			<section className="space-y-4 rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-6 shadow">
@@ -67,7 +158,7 @@ export function VehicleDetailPage() {
 				<div>
 					<button
 						type="button"
-						onClick={reload}
+						onClick={() => setReloadKey(k => k + 1)}
 						className="rounded-md border border-red-300 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-red-700 dark:text-red-400 transition hover:bg-red-100"
 					>
 						Retry
@@ -77,23 +168,12 @@ export function VehicleDetailPage() {
 		);
 	}
 
-	// Inline edit mode reuses shared form validation + payload shaping.
 	if (isEditing) {
 		return (
 			<EditSectionLayout title="Edit Vehicle" description="Update vehicle information.">
 				<VehicleForm
 					initialData={vehicle}
-					onSubmit={async (values) => {
-						await saveVehicle(
-							values as ValidatedVehicleUpdateValues,
-							(updatedVehicle) => {
-								setVehicle(updatedVehicle);
-								setIsEditing(false);
-								addToast("Vehicle updated successfully", "success");
-							},
-							(message) => addToast(message, "error"),
-						);
-					}}
+					onSubmit={async (values) => handleSave(values as ValidatedVehicleUpdateValues)}
 					submitLabel="Update Vehicle"
 					isSubmitting={isSaving}
 					mode="edit"
@@ -103,34 +183,6 @@ export function VehicleDetailPage() {
 		);
 	}
 
-	// Final deletion guard: always re-check live assignments before delete.
-	const handleDelete = async () => {
-		if (assignmentCheckError) {
-			addToast("Please retry assignment check before deleting this vehicle.", "error");
-			return;
-		}
-
-		setIsDeleting(true);
-		try {
-			const latestAssignments = await refreshAssignments(vehicle.id);
-
-			if (latestAssignments > 0) {
-				addToast("Cannot delete vehicle while it has active service assignments.", "error");
-				return;
-			}
-
-			await deleteVehicle(vehicle.id);
-			addToast("Vehicle deleted successfully", "success");
-			setIsShowingDeleteConfirm(false);
-			navigate(APP_ROUTES.vehicles);
-		} catch (error) {
-			const message = error instanceof Error ? error.message : "Failed to delete vehicle";
-			addToast(message, "error");
-		} finally {
-			setIsDeleting(false);
-		}
-	};
-
 	return (
 		<section className="space-y-6">
 			<div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
@@ -138,7 +190,6 @@ export function VehicleDetailPage() {
 					<h1 className="text-2xl font-bold text-gray-900 dark:text-white">{vehicle.licensePlate}</h1>
 					<p className="mt-1 text-sm text-gray-600 dark:text-gray-400">Fleet vehicle profile and configuration</p>
 				</div>
-
 				<EntityHeaderActions
 					entityLabel="Vehicle"
 					onEdit={() => setIsEditing(true)}
@@ -179,6 +230,3 @@ export function VehicleDetailPage() {
 		</section>
 	);
 }
-
-
-

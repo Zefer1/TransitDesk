@@ -1,10 +1,5 @@
-/** Filter hook for the guides list. Filters by name/phone search and language. Dynamically builds language options from data. */
 import { useMemo, useState } from "react";
 import type { Guide } from "../types/service.types";
-
-// Core flow note: the block below contains the main behavior used by this module.
-
-// Computes derived guide filter state, including dynamic language option extraction.
 
 export type GuideFiltersState = {
 	search: string;

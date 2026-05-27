@@ -1,13 +1,3 @@
-/**
- * ServiceTable.tsx
- *
- * Displays a list of services in two layouts:
- * - On mobile: a vertical card grid (each service is a clickable card)
- * - On desktop: a traditional data table with columns for description, type, status, etc.
- *
- * Each service row/card includes View, Edit, and Delete action buttons.
- * Clicking anywhere on a row (except the action buttons) navigates to the detail page.
- */
 import type { Service } from "../../../types/service.types";
 import { useNavigate } from "react-router-dom";
 import { StatusBadge } from "./StatusBadge";
@@ -18,7 +8,6 @@ type Props = {
   onDelete?: (serviceId: number) => void;
 };
 
-// Convert an ISO date string to a human-readable local date/time for display in the table.
 function formatScheduledAt(isoDate: string): string {
   const parsed = new Date(isoDate);
   if (Number.isNaN(parsed.getTime())) {
@@ -39,8 +28,6 @@ export function ServiceTable({ services, onDelete }: Props) {
     navigate(`/services/${serviceId}?mode=edit`);
   };
 
-  // The action buttons (View, Edit, Delete) are shared between mobile cards and desktop rows.
-  // stopPropagation prevents the row/card click handler from firing when a button is clicked.
   const renderActions = (serviceId: number) => (
     <div className="flex items-center gap-2" onClick={(event) => event.stopPropagation()}>
       <button

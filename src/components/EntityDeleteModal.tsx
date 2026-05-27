@@ -1,14 +1,3 @@
-/**
- * Reusable delete confirmation modal with assignment guardrails.
- *
- * Prevents accidental deletion of entities that have active service assignments.
- * The delete button is disabled when:
- *  - `activeAssignments > 0` (entity is assigned to scheduled/ongoing services)
- *  - `assignmentCheckError` exists (couldn't verify assignments - fail-safe)
- *
- * Used by Vehicle, Driver, and Guide detail pages.
- */
-// Guardrail modal enforces assignment-awareness before destructive actions are confirmed.
 type EntityDeleteModalProps = {
 	isOpen: boolean;
 	entityLabel: string;
@@ -86,6 +75,3 @@ export function EntityDeleteModal({
 		</div>
 	);
 }
-
-
-

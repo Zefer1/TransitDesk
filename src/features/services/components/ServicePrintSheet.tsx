@@ -1,22 +1,9 @@
-/**
- * ServicePrintSheet.tsx
- *
- * A print-only layout that is always in the DOM but hidden from the screen.
- * When the user clicks "Print / Export PDF", the browser shows only this sheet.
- *
- * Company info is read from localStorage (saved by SettingsPage).
- * Service data is passed in as a prop from ServiceDetailPage.
- */
 import './ServicePrintSheet.css';
 import type { Service } from '../../../types/service.types';
 import { formatDateTime } from '../utils/serviceFormatters';
 
-/** Same key used by SettingsPage to save company info. */
 const COMPANY_STORAGE_KEY = 'transitdesk:company:v1';
 
-// Read company info from localStorage once at render time.
-// Returns empty strings as fallback if nothing has been saved in Settings yet,
-// or if the stored data is corrupt and cannot be parsed.
 function getCompanyInfo() {
   const saved = localStorage.getItem(COMPANY_STORAGE_KEY);
   if (!saved) {
@@ -32,8 +19,6 @@ function getCompanyInfo() {
       logoUrl: data.logoUrl ?? '',
     };
   } catch {
-    // JSON.parse throws if the stored string is malformed.
-    // Return empty strings so the print sheet still renders without crashing.
     return { companyName: '', rnaat: '', tp: '', designation: '', logoUrl: '' };
   }
 }
@@ -45,17 +30,11 @@ interface ServicePrintSheetProps {
 export function ServicePrintSheet({ service }: ServicePrintSheetProps) {
   const company = getCompanyInfo();
 
-  // Build the route string from the stops array, e.g. "Funchal -> Santana -> Porto Moniz"
   const routeSummary = service.stops.length > 0 ? service.stops.join(' -> ') : 'No stops listed';
 
-  // Inline styles are used throughout this component instead of CSS classes.
-  // Reason: some browsers and PDF export engines deprioritise or block external
-  // stylesheets during printing, but inline styles are always applied. This
-  // guarantees the sheet looks the same regardless of browser or print settings.
   return (
     <div className="print-only" style={{ fontFamily: 'Arial, sans-serif', color: '#111', padding: '32px' }}>
 
-      {/* ── Company header ── */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px', borderBottom: '2px solid #111', paddingBottom: '16px' }}>
         {company.logoUrl && (
           <img
@@ -72,7 +51,6 @@ export function ServicePrintSheet({ service }: ServicePrintSheetProps) {
         </div>
       </div>
 
-      {/* ── Sheet title ── */}
       <h1 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '4px' }}>
         Service Sheet — #{service.id}
       </h1>
@@ -80,7 +58,6 @@ export function ServicePrintSheet({ service }: ServicePrintSheetProps) {
         {service.type} · {formatDateTime(service.scheduledAt)}
       </p>
 
-      {/* ── Service details ── */}
       <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '24px', fontSize: '13px' }}>
         <tbody>
           <tr style={{ borderBottom: '1px solid #eee' }}>
@@ -106,7 +83,6 @@ export function ServicePrintSheet({ service }: ServicePrintSheetProps) {
         </tbody>
       </table>
 
-      {/* ── Assignments ── */}
       <h2 style={{ fontSize: '14px', fontWeight: 'bold', marginBottom: '8px', borderBottom: '1px solid #ccc', paddingBottom: '4px' }}>
         Assignments
       </h2>
@@ -131,7 +107,6 @@ export function ServicePrintSheet({ service }: ServicePrintSheetProps) {
         </tbody>
       </table>
 
-      {/* ── Notes (only shown when present) ── */}
       {service.notes && (
         <div>
           <h2 style={{ fontSize: '14px', fontWeight: 'bold', marginBottom: '8px', borderBottom: '1px solid #ccc', paddingBottom: '4px' }}>

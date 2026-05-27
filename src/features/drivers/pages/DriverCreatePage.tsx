@@ -1,12 +1,3 @@
-/**
- * DriverCreatePage.tsx
- *
- * The page where users create a brand-new driver record.
- * It renders the shared DriverForm in "create" mode, handles the API call
- * when the form is submitted, and redirects to the new driver's detail page
- * on success. If the API call fails, an error banner is shown and a toast
- * notification lets the user know something went wrong.
- */
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../../../components/useToast";
@@ -21,7 +12,6 @@ export function DriverCreatePage() {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	/** Send the validated form data to the API, then redirect to the new driver's detail page. */
 	async function handleSubmit(values: ValidatedDriverCreateValues | ValidatedDriverUpdateValues) {
 		setIsSubmitting(true);
 		setError(null);
@@ -62,6 +52,3 @@ export function DriverCreatePage() {
 		</section>
 	);
 }
-
-
-
