@@ -7,7 +7,9 @@
   "scripts": {
     "dev": "tsx watch app.ts",
     "build": "tsc",
-    "start": "node dist/app.js"
+    "start": "node dist/app.js",
+    "seed:test": "dotenv -e .env.test -- tsx seed.test.ts",
+    "start:test": "dotenv -e .env.test -- tsx app.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.8.0",
