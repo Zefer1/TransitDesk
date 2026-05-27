@@ -1,4 +1,3 @@
-/** Services list page. Fetches all services, applies filters (status, search, date range), and renders the ServiceTable. */
 import { useEffect, useState } from "react";
 import { SERVICE_STATUSES } from "../../../types/service.types";
 import { APP_ROUTES } from "../../../constants/routes";
@@ -9,8 +8,6 @@ import { useServiceFilters } from "../../../hooks/useServiceFilters";
 import { deleteService, listServices } from "../../../api/services.api";
 import type { Service } from "../../../types/service.types";
 import { ServiceTable } from "../components/ServiceTable";
-
-// Fetches services, applies filters, and renders list-level states through shared list layout.
 
 export function ServicesListPage() {
 	const [services, setServices] = useState<Service[]>([]);

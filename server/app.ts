@@ -1,42 +1,36 @@
-// Entry point for the TransitDesk Express backend.
-// Phase 1: basic server with one health-check route.
-// Run with: node index.js (from inside the server/ folder)
-
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
+import 'dotenv/config';
+import driversRouter from './routes/drivers.js';
+import authRouter from './routes/auth.js';
+import vehiclesRouter from './routes/vehicles.js';
+import guidesRouter from './routes/guides.js';
+import servicesRouter from './routes/services.js';
+import usersRouter from './routes/users.js';
 
 const app = express();
-const PORT = 3001;
+const PORT = Number(process.env.PORT) || 3001;
 
-// Parse incoming JSON request bodies (needed for POST/PUT routes later)
 app.use(express.json());
+app.use(cors({ origin: process.env.CORS_ORIGIN || 'http://localhost:5173' }));
 
-// Allow requests from the Vite dev server running on localhost:5173
-app.use(cors({ origin: 'http://localhost:5173' }));
-
-// Health check — hit this to confirm the server is running
-// GET http://localhost:3001/api/health
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok' });
+app.get('/api/health', (_req, res) => {
+    res.json({ status: 'ok' });
 });
 
-app.get('/api/drivers', (req, res) => {
-  res.json({
-    success: true,
-    data: [
-      {
-        id: 1,
-        name: "Joao Silva",
-        gender: "Male",
-        license: "D",
-        entitledToDrive: "Van",
-        phone: "+351910000000",
-      }
-    ],
-    pagination: { page: 1, pageSize: 1, total: 1, totalPages: 1 }
-  });
+app.use('/api/auth', authRouter);
+app.use('/api', driversRouter);
+app.use('/api', vehiclesRouter);
+app.use('/api', guidesRouter);
+app.use('/api', servicesRouter);
+app.use('/api', usersRouter);
+
+app.use((err: Error, _req: Request, res: Response, next: NextFunction) => {
+    void next;
+    console.error(err.message);
+    res.status(500).json({ success: false, error: 'Internal server error' });
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Server running on http://localhost:${PORT}`);
 });

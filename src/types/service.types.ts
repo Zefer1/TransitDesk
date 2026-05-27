@@ -1,10 +1,4 @@
-/**
- * Core domain entity interfaces: Service, Vehicle, Driver, Guide.
- * These types represent the data shapes returned by the API.
- */
 import type {
-// Domain model interfaces below define the canonical shapes consumed by features and APIs.
-
   DriverLicense,
   Gender,
   ServiceStatus,
@@ -16,11 +10,11 @@ export type { DriverLicense, Gender, ServiceStatus, ServiceType, VehicleType } f
 
 export interface Service {
   id: number;
-  scheduledAt: string; // ISO date/time string
-  description: string; // e.g., "Funchal to Santana"
-  stops: string[]; // List of stop names or locations
-  distanceKm?: number; // Optional, total route distance
-  estimatedDurationMin?: number; // Optional, duration in minutes
+  scheduledAt: string;
+  description: string;
+  stops: string[];
+  distanceKm?: number;
+  estimatedDurationMin?: number;
   status: ServiceStatus;
   type: ServiceType;
   vehicle: Vehicle;
@@ -61,7 +55,7 @@ export interface Guide {
   name: string;
   gender: Gender;
   phone?: string;
-  languages?: string[]; // Array for multiple languages
+  languages?: string[];
 }
 
 

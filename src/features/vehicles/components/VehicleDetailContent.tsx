@@ -1,13 +1,3 @@
-/**
- * VehicleDetailContent.tsx
- *
- * A read-only display component that shows all of a vehicle's information
- * (specs, registration, inspection, and notes) in organized card sections.
- *
- * This component does NOT handle fetching or editing -- it simply receives
- * a vehicle object as a prop and renders it. Think of it as the "view mode"
- * for a vehicle's detail page.
- */
 import type { Vehicle } from "../../../types/service.types";
 
 type VehicleDetailContentProps = {
@@ -17,9 +7,7 @@ type VehicleDetailContentProps = {
 export function VehicleDetailContent({ vehicle }: VehicleDetailContentProps) {
 	return (
 		<>
-			{/* Two-column grid for the main info cards (stacks on mobile) */}
 			<div className="grid gap-6 md:grid-cols-2">
-				{/* Left card: vehicle specs like brand, model, year, etc. */}
 				<div className="space-y-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow">
 					<h3 className="text-lg font-semibold text-gray-900 dark:text-white">Specifications</h3>
 					<dl className="space-y-4">
@@ -44,7 +32,6 @@ export function VehicleDetailContent({ vehicle }: VehicleDetailContentProps) {
 					</dl>
 				</div>
 
-				{/* Right card: capacity and active/inactive status */}
 				<div className="space-y-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow">
 					<h3 className="text-lg font-semibold text-gray-900 dark:text-white">Capacity & Status</h3>
 					<dl className="space-y-4">
@@ -74,7 +61,6 @@ export function VehicleDetailContent({ vehicle }: VehicleDetailContentProps) {
 				</div>
 			</div>
 
-			{/* Registration and inspection section -- only shown if at least one date exists */}
 			{vehicle.registrationDate || vehicle.inspectionExpiry ? (
 				<div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow">
 					<h3 className="text-lg font-semibold text-gray-900 dark:text-white">Registration & Inspection</h3>
@@ -95,7 +81,6 @@ export function VehicleDetailContent({ vehicle }: VehicleDetailContentProps) {
 				</div>
 			) : null}
 
-			{/* Notes section -- only shown when the vehicle has notes */}
 			{vehicle.notes ? (
 				<div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow">
 					<h3 className="text-lg font-semibold text-gray-900 dark:text-white">Notes</h3>

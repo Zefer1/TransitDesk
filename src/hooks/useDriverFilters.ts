@@ -1,10 +1,7 @@
-/** Filter hook for the drivers list. Filters by name/phone search, license type, and entitled vehicle type. */
 import { useMemo, useState } from "react";
 
 import { DRIVER_LICENSES, VEHICLE_TYPES } from "../constants/enums";
 import type { Driver } from "../types/service.types";
-
-// Computes derived driver filter state and exposes memoized filter operations to list pages.
 
 export type DriverFiltersState = {
 	search: string;

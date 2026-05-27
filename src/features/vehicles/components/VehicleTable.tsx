@@ -1,13 +1,3 @@
-/**
- * VehicleTable.tsx
- *
- * Displays the list of vehicles in two different layouts depending on screen size:
- *   - On mobile: a grid of clickable cards (easier to tap)
- *   - On desktop: a traditional table with columns
- *
- * Clicking a row or card navigates the user to that vehicle's detail page.
- * Each row also has "View" and "Edit" action buttons.
- */
 import { useNavigate } from "react-router-dom";
 import type { Vehicle } from "../../../types/service.types";
 
@@ -18,21 +8,14 @@ type VehicleTableProps = {
 export function VehicleTable({ vehicles }: VehicleTableProps) {
 	const navigate = useNavigate();
 
-	/** Navigate to the vehicle's detail page */
 	const goToDetail = (vehicleId: number) => {
 		navigate(`/vehicles/${vehicleId}`);
 	};
 
-	/** Navigate to the vehicle's edit page */
 	const goToEdit = (vehicleId: number) => {
-		navigate(`/vehicles/${vehicleId}/edit`);
+		navigate(`/vehicles/${vehicleId}`);
 	};
 
-	/**
-	 * Renders the View/Edit buttons for a single vehicle.
-	 * stopPropagation prevents the button click from also triggering
-	 * the row's onClick (which would navigate to the detail page).
-	 */
 	const renderActions = (vehicle: Vehicle) => (
 		<div className="flex items-center gap-2" onClick={(event) => event.stopPropagation()}>
 			<button
@@ -56,7 +39,6 @@ export function VehicleTable({ vehicles }: VehicleTableProps) {
 
 	return (
 		<div className="space-y-4">
-			{/* Mobile layout: card grid (hidden on medium screens and up) */}
 			<div className="grid gap-4 md:hidden">
 				{vehicles.map((vehicle) => (
 					<article
@@ -98,7 +80,6 @@ export function VehicleTable({ vehicles }: VehicleTableProps) {
 				))}
 			</div>
 
-			{/* Desktop layout: traditional table (hidden on small screens) */}
 			<div className="hidden overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow md:block">
 				<table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
 					<thead className="bg-gray-50 dark:bg-gray-900">

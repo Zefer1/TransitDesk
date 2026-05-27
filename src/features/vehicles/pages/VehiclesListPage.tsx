@@ -1,15 +1,3 @@
-/**
- * VehiclesListPage.tsx
- *
- * The main "Vehicles" page that users land on. It:
- *   1. Fetches all vehicles from the API on mount
- *   2. Passes them through the useVehicleFilters hook so the user can
- *      search, filter by type, and set capacity ranges
- *   3. Renders the results in a VehicleTable (or shows empty/error states)
- *
- * The page also provides a "Create Vehicle" button and a retry mechanism
- * if the initial fetch fails.
- */
 import { useEffect, useState } from "react";
 import { EmptyState } from "../../../components/EmptyState";
 import { CrudListLayout } from "../../../components/CrudListLayout";
@@ -30,11 +18,6 @@ export function VehiclesListPage() {
 	const [reloadKey, setReloadKey] = useState(0);
 	const { filters, filteredVehicles, hasActiveFilters, setSearchFilter, setTypeFilter, setCapacityMinFilter, setCapacityMaxFilter, resetFilters } = useVehicleFilters(vehicles);
 
-	/**
-	 * Fetch all vehicles from the API when the page mounts (or when reloadKey changes).
-	 * The "isMounted" flag prevents updating state after the component unmounts,
-	 * which would cause a React warning. This is a common pattern for async effects.
-	 */
 	useEffect(() => {
 		let isMounted = true;
 
@@ -72,7 +55,6 @@ export function VehiclesListPage() {
 		};
 	}, [addToast, reloadKey]);
 
-	/** Bumping the reloadKey causes the useEffect above to run again, re-fetching vehicles */
 	const handleRetry = () => {
 		setReloadKey((value) => value + 1);
 	};
@@ -104,7 +86,6 @@ export function VehiclesListPage() {
 				action: { label: "Create Vehicle", to: APP_ROUTES.newVehicle },
 			}}
 		>
-			{/* If vehicles exist but none match the current filters, show a hint to adjust filters */}
 			{filteredVehicles.length === 0 ? (
 				<EmptyState
 					title="No vehicles match your filters"
