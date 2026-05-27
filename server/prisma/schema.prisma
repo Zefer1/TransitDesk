@@ -1,0 +1,95 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  EMPLOYEE
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  name      String
+  role      Role     @default(EMPLOYEE)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  servicesCreated Service[] @relation("CreatedBy")
+  servicesUpdated Service[] @relation("UpdatedBy")
+}
+
+model Vehicle {
+  id               Int      @id @default(autoincrement())
+  licensePlate     String   @unique
+  brand            String
+  model            String
+  year             Int
+  passengerCapacity Int
+  type             String
+  color            String
+  registrationDate String?
+  inspectionExpiry String?
+  active           Boolean  @default(true)
+  notes            String?
+  suitedFor        String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model Driver {
+  id              Int      @id @default(autoincrement())
+  name            String
+  gender          String
+  license         String
+  entitledToDrive String
+  phone           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Guide {
+  id        Int      @id @default(autoincrement())
+  name      String
+  gender    String
+  phone     String?
+  languages Json     @default("[]")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Service {
+  id                   Int      @id @default(autoincrement())
+  scheduledAt          DateTime
+  description          String
+  agencyName           String?
+  stops                Json
+  distanceKm           Float?
+  estimatedDurationMin Int?
+  status               String   @default("scheduled")
+  type                 String
+  passengerQuantity    Int?
+  notes                String?
+  vehicleSnapshot      Json
+  driverSnapshot       Json
+  guideSnapshot        Json?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  createdById Int
+  createdBy   User  @relation("CreatedBy", fields: [createdById], references: [id])
+
+  updatedById Int?
+  updatedBy   User? @relation("UpdatedBy", fields: [updatedById], references: [id])
+}

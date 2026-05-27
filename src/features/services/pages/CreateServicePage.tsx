@@ -1,4 +1,3 @@
-/** Page for creating a new service. Submits via the mock API and navigates to the detail page on success. */
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -6,8 +5,6 @@ import { ServiceForm } from "../components/ServiceForm";
 import { useToast } from "../../../components/useToast";
 import { createService } from "../../../api/services.api";
 import type { ValidatedServiceCreateValues } from "../schemas/serviceForm.schema";
-
-// Handles create flow: submit validated payload, notify user, and navigate to new detail page.
 
 export function CreateServicePage() {
 	const navigate = useNavigate();

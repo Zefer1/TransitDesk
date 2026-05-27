@@ -1,11 +1,8 @@
-/** Hook managing service status transitions (scheduled → ongoing → completed, or cancellation). Validates allowed transitions and calls the API. */
 import { useEffect, useState } from "react";
 import { ALLOWED_TRANSITIONS } from "../../../constants/serviceStatuses";
 import { setServiceStatus, updateService } from "../../../api/services.api";
 import { buildCancellationNotes } from "../utils/serviceFormatters";
 import type { Service, ServiceStatus } from "../../../types/service.types";
-
-// Coordinates transition side effects, enforcing allowed status changes before persistence.
 
 type UseServiceStatusTransitionOptions = {
 	service: Service | null;
