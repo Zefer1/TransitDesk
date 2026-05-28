@@ -94,11 +94,11 @@ export function ServiceTable({ services, onDelete }: Props) {
                 <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">
                   <div>
                     <dt className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Scheduled</dt>
-                    <dd className="mt-1 text-gray-800">{formatScheduledAt(service.scheduledAt)}</dd>
+                    <dd className="mt-1 text-gray-800 dark:text-gray-200">{formatScheduledAt(service.scheduledAt)}</dd>
                   </div>
                   <div>
                     <dt className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Passengers</dt>
-                    <dd className="mt-1 text-gray-800">{service.passengerQuantity ?? 0}</dd>
+                    <dd className="mt-1 text-gray-800 dark:text-gray-200">{service.passengerQuantity ?? 0}</dd>
                   </div>
                 </dl>
 
