@@ -1,15 +1,7 @@
-import { createContext, useContext, useState, useEffect } from 'react';
-
-type Theme = 'light' | 'dark';
+import { useState, useEffect } from 'react';
+import { ThemeContext, type Theme } from './themeContext';
 
 const THEME_STORAGE_KEY = 'transitdesk:theme:v1';
-
-type ThemeContextValue = {
-  theme: Theme;
-  toggleTheme: () => void;
-};
-
-const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>(() => {
@@ -30,12 +22,4 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       {children}
     </ThemeContext.Provider>
   );
-}
-
-export function useTheme(): ThemeContextValue {
-  const ctx = useContext(ThemeContext);
-  if (!ctx) {
-    throw new Error('useTheme must be used within a ThemeProvider');
-  }
-  return ctx;
 }
