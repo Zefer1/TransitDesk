@@ -34,4 +34,3 @@ export async function deleteVehicle(id: number): Promise<{ success: true; data: 
 
 export function getVehiclesMockStore(): Vehicle[] { return []; }
 export function resetVehiclesMockStore(_items: Vehicle[]): void {}
-export function resetVehiclesToDefaults(): void {}
