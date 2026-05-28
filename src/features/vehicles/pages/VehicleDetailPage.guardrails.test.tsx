@@ -23,8 +23,6 @@ vi.mock("../../../api/vehicles.api", () => ({
 	createVehicle: vi.fn(),
 	updateVehicle: vi.fn(),
 	deleteVehicle: vi.fn(),
-	getVehiclesMockStore: vi.fn(),
-	resetVehiclesMockStore: vi.fn(),
 }));
 
 vi.mock("../../../api/services.api", () => ({
@@ -34,8 +32,6 @@ vi.mock("../../../api/services.api", () => ({
 	updateService: vi.fn(),
 	deleteService: vi.fn(),
 	setServiceStatus: vi.fn(),
-	getServicesMockStore: vi.fn(),
-	resetServicesMockStore: vi.fn(),
 }));
 
 const MOCK_VEHICLE = {

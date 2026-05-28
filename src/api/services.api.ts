@@ -47,6 +47,3 @@ export async function setServiceStatus(id: number, status: ServiceStatus): Promi
 	const { data } = await apiClient.patch<ApiResponse<Service>>(`/services/${id}/status`, { status });
 	return data;
 }
-
-export function getServicesMockStore(): Service[] { return []; }
-export function resetServicesMockStore(_services: Service[]): void {}

@@ -31,6 +31,3 @@ export async function deleteGuide(id: number): Promise<{ success: true; data: { 
 	const { data } = await apiClient.delete<{ success: true; data: { id: number } }>(`/guides/${id}`);
 	return data;
 }
-
-export function getGuidesMockStore(): Guide[] { return []; }
-export function resetGuidesMockStore(_items: Guide[]): void {}
