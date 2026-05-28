@@ -66,11 +66,11 @@ export function DriverTable({ drivers }: DriverTableProps) {
 						<dl className="mt-4 grid grid-cols-2 gap-3 text-sm">
 							<div>
 								<dt className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Can Drive</dt>
-								<dd className="mt-1 text-gray-800">{driver.entitledToDrive}</dd>
+								<dd className="mt-1 text-gray-800 dark:text-gray-200">{driver.entitledToDrive}</dd>
 							</div>
 							<div>
 								<dt className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Phone</dt>
-								<dd className="mt-1 text-gray-800">{driver.phone ?? "N/A"}</dd>
+								<dd className="mt-1 text-gray-800 dark:text-gray-200">{driver.phone ?? "N/A"}</dd>
 							</div>
 						</dl>
 
