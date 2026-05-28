@@ -13,7 +13,7 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
-        (req as any).user = decoded;
+        req.user = decoded as Express.Request["user"];
         next();
     } catch {
         res.status(401).json({ success: false, error: "Invalid or expired token" });
