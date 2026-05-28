@@ -67,11 +67,11 @@ export function VehicleTable({ vehicles }: VehicleTableProps) {
 						<dl className="mt-4 grid grid-cols-2 gap-3 text-sm">
 							<div>
 								<dt className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Capacity</dt>
-								<dd className="mt-1 text-gray-800">{vehicle.passengerCapacity} seats</dd>
+								<dd className="mt-1 text-gray-800 dark:text-gray-200">{vehicle.passengerCapacity} seats</dd>
 							</div>
 							<div>
 								<dt className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Type</dt>
-								<dd className="mt-1 text-gray-800">{vehicle.type}</dd>
+								<dd className="mt-1 text-gray-800 dark:text-gray-200">{vehicle.type}</dd>
 							</div>
 						</dl>
 
