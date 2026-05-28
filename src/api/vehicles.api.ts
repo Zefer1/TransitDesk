@@ -31,6 +31,3 @@ export async function deleteVehicle(id: number): Promise<{ success: true; data: 
 	const { data } = await apiClient.delete<{ success: true; data: { id: number } }>(`/vehicles/${id}`);
 	return data;
 }
-
-export function getVehiclesMockStore(): Vehicle[] { return []; }
-export function resetVehiclesMockStore(_items: Vehicle[]): void {}
