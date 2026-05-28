@@ -50,4 +50,3 @@ export async function setServiceStatus(id: number, status: ServiceStatus): Promi
 
 export function getServicesMockStore(): Service[] { return []; }
 export function resetServicesMockStore(_services: Service[]): void {}
-export function resetServicesToDefaults(): void {}
