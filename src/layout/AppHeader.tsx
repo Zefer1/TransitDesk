@@ -1,9 +1,11 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { APP_ROUTES } from '../constants/routes';
-import { clearAuth } from '../lib/auth';
+import { clearAuth, getUser } from '../lib/auth';
+import { Avatar } from '../components/Avatar';
 
 export function AppHeader() {
   const navigate = useNavigate();
+  const user = getUser();
 
   function handleLogout() {
     clearAuth();
@@ -85,6 +87,14 @@ export function AppHeader() {
             >
               + New Service
             </Link>
+            {user ? (
+              <span className="inline-flex items-center gap-2">
+                <Avatar name={user.name} />
+                <span className="hidden max-w-[14ch] truncate text-sm font-medium text-gray-700 dark:text-gray-300 sm:inline">
+                  {user.name}
+                </span>
+              </span>
+            ) : null}
             <button
               onClick={handleLogout}
               className="inline-flex items-center justify-center rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 transition hover:bg-gray-100 dark:hover:bg-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
