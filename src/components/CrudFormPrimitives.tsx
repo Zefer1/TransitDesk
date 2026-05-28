@@ -56,7 +56,7 @@ type CrudTextInputProps = {
 	placeholder?: string;
 	required?: boolean;
 	disabled?: boolean;
-	type?: "text" | "number" | "date" | "datetime-local" | "tel" | "search";
+	type?: "text" | "number" | "date" | "datetime-local" | "tel" | "search" | "password";
 	autoComplete?: string;
 };
 
