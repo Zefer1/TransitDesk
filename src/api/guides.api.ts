@@ -34,4 +34,3 @@ export async function deleteGuide(id: number): Promise<{ success: true; data: { 
 
 export function getGuidesMockStore(): Guide[] { return []; }
 export function resetGuidesMockStore(_items: Guide[]): void {}
-export function resetGuidesToDefaults(): void {}
