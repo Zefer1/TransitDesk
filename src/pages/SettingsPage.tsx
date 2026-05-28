@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { CrudFormSection, CrudTextInput } from '../components/CrudFormPrimitives';
 import { useToast } from '../components/useToast';
-import { useTheme } from '../components/ThemeProvider';
+import { useTheme } from '../components/themeContext';
 import { getUser } from '../lib/auth';
 import { UsersSection } from '../features/users/UsersSection';
 
