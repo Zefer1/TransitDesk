@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 const VEHICLE_TYPES = ["Light Vehicle", "Heavy Vehicle", "Van", "Minibus", "Bus", "SUV", "Hybrid", "Taxi", "School Bus", "Other"] as const;
-const SERVICE_TYPES = ["Tour", "Levada", "Transfer", "Taxi", "Shuttle"] as const;
+const SERVICE_TYPES = ["Tour", "Transfer", "Taxi", "Shuttle", "Full Day", "Half Day"] as const;
 
 const requiredText = (field: string) => z.string().trim().min(1, `${field} is required`);
 

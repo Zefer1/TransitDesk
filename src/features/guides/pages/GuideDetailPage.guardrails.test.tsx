@@ -76,10 +76,10 @@ const EMPTY_LIST_RESPONSE = {
 const ACTIVE_SERVICE_WITH_GUIDE = {
 	id: 1,
 	scheduledAt: new Date(Date.now() + 3_600_000).toISOString(),
-	description: "Levada Walk",
+	description: "Mountain Tour",
 	stops: ["Funchal", "Ribeiro Frio"],
 	status: "scheduled" as const,
-	type: "Levada" as const,
+	type: "Tour" as const,
 	vehicle: MOCK_VEHICLE,
 	driver: MOCK_DRIVER,
 	guide: MOCK_GUIDE,

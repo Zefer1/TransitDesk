@@ -3,7 +3,7 @@ import { z } from "zod";
 const GENDERS = ["Male", "Female"] as const;
 const DRIVER_LICENSES = ["B1", "B", "C1", "C", "D1", "D", "BE", "C1E", "CE", "D1E", "DE"] as const;
 const VEHICLE_TYPES = ["Light Vehicle", "Heavy Vehicle", "Van", "Minibus", "Bus", "SUV", "Hybrid", "Taxi", "School Bus", "Other"] as const;
-const SERVICE_TYPES = ["Tour", "Levada", "Transfer", "Taxi", "Shuttle"] as const;
+const SERVICE_TYPES = ["Tour", "Transfer", "Taxi", "Shuttle", "Full Day", "Half Day"] as const;
 const SERVICE_STATUSES = ["scheduled", "ongoing", "completed", "cancelled"] as const;
 
 const requiredText = (field: string) => z.string().trim().min(1, `${field} is required`);
