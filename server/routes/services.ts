@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { Prisma, type Service } from "@prisma/client";
 import prisma from "../lib/prisma.js";
 import { requireAuth } from "../middleware/requireAuth.js";
 import { validate } from "../middleware/validate.js";
@@ -13,7 +14,7 @@ const VALID_TRANSITIONS: Record<string, string[]> = {
     cancelled: [],
 };
 
-function mapToService(record: any) {
+function mapToService(record: Service) {
     const { vehicleSnapshot, driverSnapshot, guideSnapshot, createdById, updatedById, ...rest } = record;
     return {
         ...rest,
@@ -52,7 +53,7 @@ router.get("/services/:id", requireAuth, async (req, res) => {
 router.post("/services", requireAuth, validate(serviceCreateSchema), async (req, res) => {
     try {
         const { vehicle, driver, guide, ...rest } = req.body;
-        const userId = (req as any).user.id;
+        const userId = req.user!.id;
 
         const record = await prisma.service.create({
             data: {
@@ -72,9 +73,9 @@ router.post("/services", requireAuth, validate(serviceCreateSchema), async (req,
 router.put("/services/:id", requireAuth, validate(serviceUpdateSchema), async (req, res) => {
     try {
         const { vehicle, driver, guide, ...rest } = req.body;
-        const userId = (req as any).user.id;
+        const userId = req.user!.id;
 
-        const data: any = { ...rest, updatedById: userId };
+        const data: Prisma.ServiceUncheckedUpdateInput = { ...rest, updatedById: userId };
         if (vehicle !== undefined) data.vehicleSnapshot = vehicle;
         if (driver !== undefined) data.driverSnapshot = driver;
         if (guide !== undefined) data.guideSnapshot = guide;
@@ -92,7 +93,7 @@ router.put("/services/:id", requireAuth, validate(serviceUpdateSchema), async (r
 router.patch("/services/:id/status", requireAuth, validate(serviceStatusSchema), async (req, res) => {
     try {
         const { status } = req.body;
-        const userId = (req as any).user.id;
+        const userId = req.user!.id;
 
         const current = await prisma.service.findUnique({
             where: { id: Number(req.params.id) },
