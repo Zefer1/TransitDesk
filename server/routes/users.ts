@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { Prisma } from "@prisma/client";
 import bcrypt from "bcrypt";
 import prisma from "../lib/prisma.js";
 import { requireAuth } from "../middleware/requireAuth.js";
@@ -40,7 +41,7 @@ router.post("/users", requireAuth, requireAdmin, validate(userCreateSchema), asy
 router.patch("/users/:id", requireAuth, requireAdmin, validate(userUpdateSchema), async (req, res) => {
     try {
         const { name, password } = req.body;
-        const data: any = {};
+        const data: Prisma.UserUncheckedUpdateInput = {};
 
         if (name !== undefined) data.name = name;
         if (password !== undefined) data.password = await bcrypt.hash(password, SALT_ROUNDS);
