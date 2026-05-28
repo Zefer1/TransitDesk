@@ -33,8 +33,6 @@ vi.mock("../../../api/drivers.api", () => ({
 	createDriver: vi.fn(),
 	updateDriver: vi.fn(),
 	deleteDriver: vi.fn(),
-	getDriversMockStore: vi.fn(),
-	resetDriversMockStore: vi.fn(),
 }));
 
 vi.mock("../../../api/services.api", () => ({
@@ -44,8 +42,6 @@ vi.mock("../../../api/services.api", () => ({
 	updateService: vi.fn(),
 	deleteService: vi.fn(),
 	setServiceStatus: vi.fn(),
-	getServicesMockStore: vi.fn(),
-	resetServicesMockStore: vi.fn(),
 }));
 
 const MOCK_DRIVER = {
