@@ -3,6 +3,7 @@ import { CrudFormSection, CrudTextInput } from '../components/CrudFormPrimitives
 import { useToast } from '../components/useToast';
 import { useTheme } from '../components/themeContext';
 import { getUser } from '../lib/auth';
+import { AccountSection } from '../features/account/AccountSection';
 import { UsersSection } from '../features/users/UsersSection';
 
 const COMPANY_STORAGE_KEY = 'transitdesk:company:v1';
@@ -148,6 +149,8 @@ export function SettingsPage() {
           </button>
         </div>
       </CrudFormSection>
+
+      <AccountSection />
 
       {isAdmin ? <UsersSection /> : null}
     </section>
