@@ -26,8 +26,6 @@ vi.mock("../../../api/guides.api", () => ({
 	createGuide: vi.fn(),
 	updateGuide: vi.fn(),
 	deleteGuide: vi.fn(),
-	getGuidesMockStore: vi.fn(),
-	resetGuidesMockStore: vi.fn(),
 }));
 
 vi.mock("../../../api/services.api", () => ({
@@ -37,8 +35,6 @@ vi.mock("../../../api/services.api", () => ({
 	updateService: vi.fn(),
 	deleteService: vi.fn(),
 	setServiceStatus: vi.fn(),
-	getServicesMockStore: vi.fn(),
-	resetServicesMockStore: vi.fn(),
 }));
 
 const MOCK_GUIDE = {

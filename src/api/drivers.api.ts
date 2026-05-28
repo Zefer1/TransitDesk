@@ -31,6 +31,3 @@ export async function deleteDriver(id: number): Promise<{ success: true; data: {
 	const { data } = await apiClient.delete<{ success: true; data: { id: number } }>(`/drivers/${id}`);
 	return data;
 }
-
-export function getDriversMockStore(): Driver[] { return []; }
-export function resetDriversMockStore(_items: Driver[]): void {}
