@@ -14,3 +14,7 @@ export async function login(username: string, password: string): Promise<{ token
     );
     return data.data;
 }
+
+export async function changePassword(currentPassword: string, newPassword: string): Promise<void> {
+    await apiClient.patch("/auth/change-password", { currentPassword, newPassword });
+}
