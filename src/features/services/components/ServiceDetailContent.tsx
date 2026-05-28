@@ -37,21 +37,21 @@ export function ServiceDetailContent({
 			<div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
 				<div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-sm">
 					<p className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Route summary</p>
-					<p className="mt-2 text-sm text-gray-800">{routeSummary}</p>
+					<p className="mt-2 text-sm text-gray-800 dark:text-gray-200">{routeSummary}</p>
 				</div>
 				<div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-sm">
 					<p className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Vehicle capacity usage</p>
-					<p className="mt-2 text-sm text-gray-800">
+					<p className="mt-2 text-sm text-gray-800 dark:text-gray-200">
 						{passengerCount}/{capacity} passengers ({occupancy}%)
 					</p>
 				</div>
 				<div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-sm">
 					<p className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Seats remaining</p>
-					<p className="mt-2 text-sm text-gray-800">{seatsRemaining}</p>
+					<p className="mt-2 text-sm text-gray-800 dark:text-gray-200">{seatsRemaining}</p>
 				</div>
 				<div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-sm">
 					<p className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Total estimated time</p>
-					<p className="mt-2 text-sm text-gray-800">
+					<p className="mt-2 text-sm text-gray-800 dark:text-gray-200">
 						{formatTotalEstimatedTime(service.estimatedDurationMin)}
 					</p>
 				</div>
