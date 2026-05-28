@@ -2,7 +2,7 @@ export const SERVICE_STATUSES = ["scheduled", "ongoing", "completed", "cancelled
 
 export type ServiceStatus = (typeof SERVICE_STATUSES)[number];
 
-export const SERVICE_TYPES = ["Tour", "Levada", "Transfer", "Taxi", "Shuttle"] as const;
+export const SERVICE_TYPES = ["Tour", "Transfer", "Taxi", "Shuttle", "Full Day", "Half Day"] as const;
 
 export type ServiceType = (typeof SERVICE_TYPES)[number];
 
