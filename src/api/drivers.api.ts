@@ -34,4 +34,3 @@ export async function deleteDriver(id: number): Promise<{ success: true; data: {
 
 export function getDriversMockStore(): Driver[] { return []; }
 export function resetDriversMockStore(_items: Driver[]): void {}
-export function resetDriversToDefaults(): void {}

@@ -2,18 +2,15 @@ import { useState } from 'react';
 import { CrudFormSection, CrudTextInput } from '../components/CrudFormPrimitives';
 import { useToast } from '../components/useToast';
 import { useTheme } from '../components/ThemeProvider';
-import { resetVehiclesToDefaults } from '../api/vehicles.api';
-import { resetDriversToDefaults } from '../api/drivers.api';
-import { resetGuidesToDefaults } from '../api/guides.api';
-import { resetServicesToDefaults } from '../api/services.api';
+import { getUser } from '../lib/auth';
+import { UsersSection } from '../features/users/UsersSection';
 
 const COMPANY_STORAGE_KEY = 'transitdesk:company:v1';
 
 export function SettingsPage() {
   const { addToast } = useToast();
   const { theme, toggleTheme } = useTheme();
-
-  const [confirmReset, setConfirmReset] = useState(false);
+  const isAdmin = getUser()?.role === 'ADMIN';
 
   const [form, setForm] = useState(() => {
     const saved = localStorage.getItem(COMPANY_STORAGE_KEY);
@@ -53,15 +50,6 @@ export function SettingsPage() {
   function handleSave() {
     localStorage.setItem(COMPANY_STORAGE_KEY, JSON.stringify(form));
     addToast('Company info saved.', 'success');
-  }
-
-  function handleReset() {
-    resetVehiclesToDefaults();
-    resetDriversToDefaults();
-    resetGuidesToDefaults();
-    resetServicesToDefaults();
-    setConfirmReset(false);
-    addToast('Mock data has been reset to defaults.', 'success');
   }
 
   return (
@@ -161,45 +149,7 @@ export function SettingsPage() {
         </div>
       </CrudFormSection>
 
-      <CrudFormSection title="Data" description="Reset all mock data back to the built-in defaults.">
-        <div className="space-y-3">
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            This will clear any vehicles, drivers, guides, and services you have created
-            and restore the original sample records. The page will not reload — navigate
-            to any list to see the fresh data.
-          </p>
-
-          {confirmReset ? (
-            <div className="flex items-center gap-3">
-              <p className="text-sm font-medium text-red-600 dark:text-red-400">
-                Are you sure? This cannot be undone.
-              </p>
-              <button
-                type="button"
-                onClick={handleReset}
-                className="inline-flex items-center justify-center rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
-              >
-                Yes, reset
-              </button>
-              <button
-                type="button"
-                onClick={() => setConfirmReset(false)}
-                className="inline-flex items-center justify-center rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 transition hover:bg-gray-100 dark:hover:bg-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-              >
-                Cancel
-              </button>
-            </div>
-          ) : (
-            <button
-              type="button"
-              onClick={() => setConfirmReset(true)}
-              className="inline-flex items-center justify-center rounded-md border border-red-300 dark:border-red-700 px-4 py-2 text-sm font-medium text-red-600 dark:text-red-400 transition hover:bg-red-50 dark:hover:bg-red-900/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
-            >
-              Reset mock data
-            </button>
-          )}
-        </div>
-      </CrudFormSection>
+      {isAdmin ? <UsersSection /> : null}
     </section>
   );
 }
