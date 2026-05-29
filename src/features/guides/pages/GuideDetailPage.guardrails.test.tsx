@@ -144,7 +144,7 @@ describe("GuideDetailPage - delete guardrails", () => {
 
 	it("aborts delete at confirmation when an assignment appears between check and confirm", async () => {
 		vi.mocked(listServices)
-			.mockResolvedValueOnce(EMPTY_LIST_RESPONSE) // initial assignment check → button enabled
+			.mockResolvedValueOnce(EMPTY_LIST_RESPONSE) // initial assignment check, button enabled
 			.mockResolvedValueOnce({
 				// fail-safe re-check inside handleDelete
 				success: true,
