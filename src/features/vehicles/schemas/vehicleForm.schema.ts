@@ -1,4 +1,3 @@
-/** Zod schemas for vehicle create/update validation. */
 import { z } from "zod";
 
 import { vehicleBaseFieldsSchema } from "./vehicleBase.schema";
