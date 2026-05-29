@@ -8,14 +8,18 @@ async function login(page: Page) {
     await expect(page).toHaveURL('/services');
 }
 
-function futureDateTimeLocal(): string {
+let scheduledMinuteOffset = 0;
+
+function futureDateTimeLocal(minuteOffset: number): string {
     const d = new Date();
     d.setDate(d.getDate() + 1);
+    d.setMinutes(d.getMinutes() + minuteOffset);
     return d.toISOString().slice(0, 16);
 }
 
-async function fillServiceForm(page: Page, description: string, type: string) {
-    await page.getByLabel('Scheduled time').fill(futureDateTimeLocal());
+async function fillServiceForm(page: Page, description: string, type: string, scheduledAt?: string) {
+    const when = scheduledAt ?? futureDateTimeLocal(scheduledMinuteOffset++);
+    await page.getByLabel('Scheduled time').fill(when);
     await page.getByLabel('Service type').selectOption(type);
     await page.getByLabel('Description').fill(description);
     await page.getByLabel('Passenger quantity').fill('4');
