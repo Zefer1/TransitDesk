@@ -4,6 +4,13 @@ import prisma from "../lib/prisma.js";
 import { requireAuth } from "../middleware/requireAuth.js";
 import { validate } from "../middleware/validate.js";
 import { serviceCreateSchema, serviceUpdateSchema, serviceStatusSchema } from "../schemas/services.schema.js";
+import {
+    findOverlapConflicts,
+    findOngoingConflicts,
+    overlapMessage,
+    ongoingMessage,
+    snapshotId,
+} from "../lib/scheduling.js";
 
 const router = Router();
 
@@ -55,6 +62,30 @@ router.post("/services", requireAuth, validate(serviceCreateSchema), async (req,
         const { vehicle, driver, guide, ...rest } = req.body;
         const userId = req.user!.id;
 
+        const resourceIds = {
+            vehicleId: snapshotId(vehicle),
+            driverId: snapshotId(driver),
+            guideId: snapshotId(guide),
+        };
+
+        const overlaps = await findOverlapConflicts({
+            ...resourceIds,
+            scheduledAt: new Date(rest.scheduledAt),
+            durationMin: rest.estimatedDurationMin ?? null,
+        });
+        if (overlaps.length > 0) {
+            res.status(422).json({ success: false, error: overlapMessage(overlaps) });
+            return;
+        }
+
+        if (rest.status === "ongoing") {
+            const ongoing = await findOngoingConflicts(resourceIds);
+            if (ongoing.length > 0) {
+                res.status(422).json({ success: false, error: ongoingMessage(ongoing) });
+                return;
+            }
+        }
+
         const record = await prisma.service.create({
             data: {
                 ...rest,
@@ -74,14 +105,40 @@ router.put("/services/:id", requireAuth, validate(serviceUpdateSchema), async (r
     try {
         const { vehicle, driver, guide, ...rest } = req.body;
         const userId = req.user!.id;
+        const id = Number(req.params.id);
+
+        const current = await prisma.service.findUnique({ where: { id } });
+        if (!current) {
+            res.status(404).json({ success: false, error: "Service not found" });
+            return;
+        }
 
         const data: Prisma.ServiceUncheckedUpdateInput = { ...rest, updatedById: userId };
         if (vehicle !== undefined) data.vehicleSnapshot = vehicle;
         if (driver !== undefined) data.driverSnapshot = driver;
         if (guide !== undefined) data.guideSnapshot = guide;
 
+        const effectiveStatus = rest.status ?? current.status;
+        if (effectiveStatus === "scheduled" || effectiveStatus === "ongoing") {
+            const overlaps = await findOverlapConflicts({
+                excludeId: id,
+                scheduledAt: new Date(rest.scheduledAt ?? current.scheduledAt),
+                durationMin:
+                    rest.estimatedDurationMin !== undefined
+                        ? rest.estimatedDurationMin
+                        : current.estimatedDurationMin,
+                vehicleId: snapshotId(vehicle ?? current.vehicleSnapshot),
+                driverId: snapshotId(driver ?? current.driverSnapshot),
+                guideId: snapshotId(guide ?? current.guideSnapshot),
+            });
+            if (overlaps.length > 0) {
+                res.status(422).json({ success: false, error: overlapMessage(overlaps) });
+                return;
+            }
+        }
+
         const record = await prisma.service.update({
-            where: { id: Number(req.params.id) },
+            where: { id },
             data,
         });
         res.json({ success: true, data: mapToService(record) });
@@ -110,6 +167,19 @@ router.patch("/services/:id/status", requireAuth, validate(serviceStatusSchema),
                 error: `Cannot transition from '${current.status}' to '${status}'`,
             });
             return;
+        }
+
+        if (status === "ongoing") {
+            const ongoing = await findOngoingConflicts({
+                excludeId: current.id,
+                vehicleId: snapshotId(current.vehicleSnapshot),
+                driverId: snapshotId(current.driverSnapshot),
+                guideId: snapshotId(current.guideSnapshot),
+            });
+            if (ongoing.length > 0) {
+                res.status(422).json({ success: false, error: ongoingMessage(ongoing) });
+                return;
+            }
         }
 
         const record = await prisma.service.update({

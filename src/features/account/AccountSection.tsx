@@ -1,24 +1,11 @@
 import { useState } from "react";
-import axios from "axios";
 
 import { CrudFormSection, CrudTextInput, CrudFormActions } from "../../components/CrudFormPrimitives";
 import { useToast } from "../../components/useToast";
 import { changePassword } from "../../api/auth.api";
+import { extractApiError } from "../../lib/apiError";
 
 const EMPTY = { current: "", next: "", confirm: "" };
-
-function extractErrorMessage(error: unknown, fallback: string): string {
-	if (axios.isAxiosError(error)) {
-		const data = error.response?.data;
-		if (data?.errors?.length) {
-			return data.errors.map((e: { message: string }) => e.message).join(". ");
-		}
-		if (data?.error) {
-			return data.error;
-		}
-	}
-	return fallback;
-}
 
 export function AccountSection() {
 	const { addToast } = useToast();
@@ -45,7 +32,7 @@ export function AccountSection() {
 			setForm(EMPTY);
 			addToast("Password changed.", "success");
 		} catch (err) {
-			setError(extractErrorMessage(err, "Failed to change password."));
+			setError(extractApiError(err, "Failed to change password."));
 		} finally {
 			setIsSubmitting(false);
 		}
