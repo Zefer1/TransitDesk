@@ -40,7 +40,7 @@ export function ServicePrintSheet({ service }: ServicePrintSheetProps) {
           <img
             src={company.logoUrl}
             alt="Company logo"
-            style={{ height: '300px', width: 'auto', objectFit: 'contain' }}
+            style={{ height: '150px', width: 'auto', objectFit: 'contain' }}
           />
         )}
         <div>
