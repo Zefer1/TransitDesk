@@ -1,6 +1,5 @@
 import { z } from "zod";
-
-const GENDERS = ["Male", "Female"] as const;
+import { GENDERS } from "./constants.js";
 
 const requiredText = (field: string) => z.string().trim().min(1, `${field} is required`);
 
