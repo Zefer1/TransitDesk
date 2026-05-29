@@ -52,7 +52,7 @@ export function ServicePrintSheet({ service }: ServicePrintSheetProps) {
       </div>
 
       <h1 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '4px' }}>
-        Service Sheet — #{service.id}
+        Service Sheet #{service.id}
       </h1>
       <p style={{ fontSize: '13px', color: '#555', marginBottom: '24px' }}>
         {service.type} · {formatDateTime(service.scheduledAt)}
@@ -91,7 +91,7 @@ export function ServicePrintSheet({ service }: ServicePrintSheetProps) {
           <tr style={{ borderBottom: '1px solid #eee' }}>
             <td style={{ padding: '6px 8px', fontWeight: 'bold', width: '160px', verticalAlign: 'top' }}>Vehicle</td>
             <td style={{ padding: '6px 8px', verticalAlign: 'top' }}>
-              {service.vehicle.licensePlate} ({service.vehicle.brand} {service.vehicle.model}) — Capacity: {service.vehicle.passengerCapacity}
+              {service.vehicle.licensePlate} ({service.vehicle.brand} {service.vehicle.model}), Capacity: {service.vehicle.passengerCapacity}
             </td>
           </tr>
           <tr style={{ borderBottom: '1px solid #eee' }}>
