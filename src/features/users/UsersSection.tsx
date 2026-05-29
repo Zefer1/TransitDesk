@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 
 import { CrudFormSection, CrudSelectInput, CrudTextInput, CrudFormActions } from "../../components/CrudFormPrimitives";
 import { Modal } from "../../components/Modal";
 import { useToast } from "../../components/useToast";
 import { getUser } from "../../lib/auth";
+import { extractApiError } from "../../lib/apiError";
 import {
 	createUser,
 	deleteUser,
@@ -29,19 +29,6 @@ type FormState = {
 
 const EMPTY_FORM: FormState = { username: "", name: "", password: "", role: "EMPLOYEE" };
 
-function extractErrorMessage(error: unknown, fallback: string): string {
-	if (axios.isAxiosError(error)) {
-		const data = error.response?.data;
-		if (data?.errors?.length) {
-			return data.errors.map((e: { message: string }) => e.message).join(". ");
-		}
-		if (data?.error) {
-			return data.error;
-		}
-	}
-	return fallback;
-}
-
 export function UsersSection() {
 	const { addToast } = useToast();
 	const currentUser = getUser();
@@ -65,7 +52,7 @@ export function UsersSection() {
 		try {
 			setUsers(await listUsers());
 		} catch (error) {
-			setLoadError(extractErrorMessage(error, "Failed to load users."));
+			setLoadError(extractApiError(error, "Failed to load users."));
 		} finally {
 			setIsLoading(false);
 		}
@@ -118,7 +105,7 @@ export function UsersSection() {
 			setIsFormOpen(false);
 			await loadUsers();
 		} catch (error) {
-			setFormError(extractErrorMessage(error, "Failed to save user."));
+			setFormError(extractApiError(error, "Failed to save user."));
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -135,7 +122,7 @@ export function UsersSection() {
 			setDeleteTarget(null);
 			await loadUsers();
 		} catch (error) {
-			addToast(extractErrorMessage(error, "Failed to delete user."), "error");
+			addToast(extractApiError(error, "Failed to delete user."), "error");
 		} finally {
 			setIsDeleting(false);
 		}
