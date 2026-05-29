@@ -7,6 +7,7 @@ import { ServiceTransitionModal } from "../components/ServiceTransitionModal";
 import { SkeletonDetailPage } from "../../../components/Skeleton";
 import { useToast } from "../../../components/useToast";
 import { getServiceById, updateService } from "../../../api/services.api";
+import { extractApiError } from "../../../lib/apiError";
 import type { Service } from "../../../types/service.types";
 import type { ValidatedServiceCreateValues } from "../schemas/serviceForm.schema";
 import { formatDateTime } from "../utils/serviceFormatters";
@@ -131,8 +132,9 @@ export function ServiceDetailPage() {
 			exitEdit();
 			addToast("Service updated successfully.", "success");
 		} catch (error) {
-			addToast("Unable to save service updates.", "error");
-			throw error;
+			const message = extractApiError(error, "Unable to save service updates.");
+			addToast(message, "error");
+			throw new Error(message);
 		} finally {
 			setIsSaving(false);
 		}
