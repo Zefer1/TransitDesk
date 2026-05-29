@@ -16,7 +16,6 @@ test.describe('User management (admin)', () => {
         await page.goto('/settings');
         await expect(page.getByRole('heading', { name: 'Users' })).toBeVisible();
 
-        // 2. Create a new user — appears in the table
         await page.getByRole('button', { name: 'Add user' }).click();
         const createDialog = page.getByRole('dialog');
         await createDialog.getByLabel(/^Username/).fill('tester1');
@@ -28,7 +27,6 @@ test.describe('User management (admin)', () => {
         await expect(page.getByRole('cell', { name: 'tester1' })).toBeVisible();
         await expect(page.getByRole('cell', { name: 'Test One', exact: true })).toBeVisible();
 
-        // 3. Edit user — name editable, username and role read-only
         await page.getByRole('button', { name: 'Edit user Test One' }).click();
         const editDialog = page.getByRole('dialog');
         await expect(editDialog.getByLabel(/^Username/)).toBeDisabled();
@@ -37,17 +35,14 @@ test.describe('User management (admin)', () => {
         await editDialog.getByRole('button', { name: 'Save changes' }).click();
         await expect(page.getByRole('cell', { name: 'Test One Renamed', exact: true })).toBeVisible();
 
-        // 4. Delete button disabled for own account
         await expect(page.getByRole('button', { name: 'Delete user Administrator' })).toBeDisabled();
 
-        // 5. Delete another user — row disappears
         await page.getByRole('button', { name: 'Delete user Test One Renamed' }).click();
         await page.getByRole('dialog').getByRole('button', { name: 'Delete user', exact: true }).click();
         await expect(page.getByRole('cell', { name: 'tester1' })).toBeHidden();
     });
 
     test('employee cannot see the Users section', async ({ page }) => {
-        // Create an employee account as admin
         await loginAs(page, 'admin', 'admin123');
         await page.goto('/settings');
         await page.getByRole('button', { name: 'Add user' }).click();
@@ -61,7 +56,6 @@ test.describe('User management (admin)', () => {
 
         await page.getByRole('button', { name: 'Logout' }).click();
 
-        // Log in as the employee — Users section must not render
         await loginAs(page, 'emp1', 'password123');
         await page.goto('/settings');
         await expect(page.getByRole('heading', { name: 'Settings' })).toBeVisible();

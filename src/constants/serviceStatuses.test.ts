@@ -21,43 +21,43 @@ describe("ALLOWED_TRANSITIONS matrix", () => {
 
 describe("canTransition()", () => {
   // Valid transitions
-  it("allows scheduled → ongoing", () => {
+  it("allows scheduled to ongoing", () => {
     expect(canTransition("scheduled", "ongoing")).toBe(true);
   });
 
-  it("allows scheduled → cancelled", () => {
+  it("allows scheduled to cancelled", () => {
     expect(canTransition("scheduled", "cancelled")).toBe(true);
   });
 
-  it("allows ongoing → completed", () => {
+  it("allows ongoing to completed", () => {
     expect(canTransition("ongoing", "completed")).toBe(true);
   });
 
-  it("allows ongoing → cancelled", () => {
+  it("allows ongoing to cancelled", () => {
     expect(canTransition("ongoing", "cancelled")).toBe(true);
   });
 
   // Invalid transitions
-  it("forbids scheduled → completed", () => {
+  it("forbids scheduled to completed", () => {
     expect(canTransition("scheduled", "completed")).toBe(false);
   });
 
-  it("forbids scheduled → scheduled (self-transition)", () => {
+  it("forbids scheduled to scheduled (self-transition)", () => {
     expect(canTransition("scheduled", "scheduled")).toBe(false);
   });
 
-  it("forbids ongoing → scheduled", () => {
+  it("forbids ongoing to scheduled", () => {
     expect(canTransition("ongoing", "scheduled")).toBe(false);
   });
 
-  it("forbids completed → any status", () => {
+  it("forbids completed to any status", () => {
     expect(canTransition("completed", "scheduled")).toBe(false);
     expect(canTransition("completed", "ongoing")).toBe(false);
     expect(canTransition("completed", "cancelled")).toBe(false);
     expect(canTransition("completed", "completed")).toBe(false);
   });
 
-  it("forbids cancelled → any status", () => {
+  it("forbids cancelled to any status", () => {
     expect(canTransition("cancelled", "scheduled")).toBe(false);
     expect(canTransition("cancelled", "ongoing")).toBe(false);
     expect(canTransition("cancelled", "completed")).toBe(false);
