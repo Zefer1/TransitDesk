@@ -38,3 +38,7 @@ Thumbs.db
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+
+# Vitest result output
+vitest-results.json
+.vitest-results.json
