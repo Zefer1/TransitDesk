@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { ALLOWED_TRANSITIONS } from "../../../constants/serviceStatuses";
 import { setServiceStatus, updateService } from "../../../api/services.api";
+import { extractApiError } from "../../../lib/apiError";
 import { buildCancellationNotes } from "../utils/serviceFormatters";
 import type { Service, ServiceStatus } from "../../../types/service.types";
 
@@ -110,8 +111,9 @@ export function useServiceStatusTransition({
 			addToast(`Status changed to ${transitionTarget}.`, "success");
 		} catch (error) {
 			setService(previousService);
-			setTransitionError(error instanceof Error ? error.message : "Unable to update service status.");
-			addToast("Status update failed. Changes reverted.", "error");
+			const message = extractApiError(error, "Unable to update service status.");
+			setTransitionError(message);
+			addToast(message, "error");
 		} finally {
 			setIsTransitioning(false);
 		}

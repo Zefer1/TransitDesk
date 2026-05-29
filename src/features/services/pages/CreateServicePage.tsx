@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { ServiceForm } from "../components/ServiceForm";
 import { useToast } from "../../../components/useToast";
 import { createService } from "../../../api/services.api";
+import { extractApiError } from "../../../lib/apiError";
 import type { ValidatedServiceCreateValues } from "../schemas/serviceForm.schema";
 
 export function CreateServicePage() {
@@ -19,7 +20,7 @@ export function CreateServicePage() {
 			const response = await createService(values);
 			navigate(`/services/${response.data.id}`);
 		} catch (err) {
-			const message = err instanceof Error ? err.message : "Failed to create service. Please try again.";
+			const message = extractApiError(err, "Failed to create service. Please try again.");
 			setError(message);
 			addToast(message, "error");
 			setIsSubmitting(false);
