@@ -97,6 +97,23 @@ export function ServiceDetailContent({
 							{service.notes}
 						</div>
 					) : null}
+
+					{service.createdBy || service.updatedBy ? (
+						<div className="mt-4 space-y-1 border-t border-gray-200 dark:border-gray-700 pt-3 text-xs text-gray-500 dark:text-gray-400">
+							{service.createdBy ? (
+								<p>
+									Created by {service.createdBy.name}
+									{service.createdAt ? ` on ${formatDateTime(service.createdAt)}` : ""}
+								</p>
+							) : null}
+							{service.updatedBy ? (
+								<p>
+									Last edited by {service.updatedBy.name}
+									{service.updatedAt ? ` on ${formatDateTime(service.updatedAt)}` : ""}
+								</p>
+							) : null}
+						</div>
+					) : null}
 				</article>
 
 				<article className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
