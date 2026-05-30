@@ -7,6 +7,7 @@ import { VehicleDetailContent } from "../components/VehicleDetailContent";
 import { EntityHeaderActions } from "../../../components/EntityHeaderActions";
 import { EntityDeleteModal } from "../../../components/EntityDeleteModal";
 import { InUseBadge } from "../../../components/InUseBadge";
+import { extractApiError } from "../../../lib/apiError";
 import { EditSectionLayout } from "../../../components/EditSectionLayout";
 import { getVehicleById, updateVehicle, deleteVehicle } from "../../../api/vehicles.api";
 import { listServices } from "../../../api/services.api";
@@ -104,8 +105,7 @@ export function VehicleDetailPage() {
 			setIsEditing(false);
 			addToast("Vehicle updated successfully", "success");
 		} catch (error) {
-			const message = error instanceof Error ? error.message : "Failed to update vehicle";
-			addToast(message, "error");
+			addToast(extractApiError(error, "Failed to update vehicle"), "error");
 		} finally {
 			setIsSaving(false);
 		}
