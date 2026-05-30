@@ -51,6 +51,7 @@ test.describe('Services CRUD', () => {
         await expect(page.getByText('Tour', { exact: false }).first()).toBeVisible();
         await expect(page.getByText('Test Driver', { exact: false }).first()).toBeVisible();
         await expect(page.getByText('AA-00-BB', { exact: false }).first()).toBeVisible();
+        await expect(page.getByText(/Created by Administrator/)).toBeVisible();
     });
 
     test('guardrail blocks deleting a driver with an active service', async ({ page }) => {

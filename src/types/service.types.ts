@@ -23,6 +23,10 @@ export interface Service {
   guide?: Guide;
   notes?: string;
   agencyName?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  createdBy?: { id: number; name: string } | null;
+  updatedBy?: { id: number; name: string } | null;
 }
 
 export interface Vehicle {
