@@ -6,6 +6,7 @@ import { VehicleForm } from "../components/VehicleForm";
 import { VehicleDetailContent } from "../components/VehicleDetailContent";
 import { EntityHeaderActions } from "../../../components/EntityHeaderActions";
 import { EntityDeleteModal } from "../../../components/EntityDeleteModal";
+import { InUseBadge } from "../../../components/InUseBadge";
 import { EditSectionLayout } from "../../../components/EditSectionLayout";
 import { getVehicleById, updateVehicle, deleteVehicle } from "../../../api/vehicles.api";
 import { listServices } from "../../../api/services.api";
@@ -29,6 +30,7 @@ export function VehicleDetailPage() {
 	const [isDeleting, setIsDeleting] = useState(false);
 
 	const [activeAssignments, setActiveAssignments] = useState(0);
+	const [ongoingServiceId, setOngoingServiceId] = useState<number | null>(null);
 	const [isCheckingAssignments, setIsCheckingAssignments] = useState(false);
 	const [assignmentCheckError, setAssignmentCheckError] = useState<string | null>(null);
 
@@ -75,11 +77,13 @@ export function VehicleDetailPage() {
 			try {
 				const response = await listServices();
 				if (!cancelled) {
-					const count = response.data.filter(
-						s => s.vehicle.id === vehicle!.id &&
-						(s.status === "scheduled" || s.status === "ongoing")
+					const forThisVehicle = response.data.filter(s => s.vehicle.id === vehicle!.id);
+					const count = forThisVehicle.filter(
+						s => s.status === "scheduled" || s.status === "ongoing"
 					).length;
 					setActiveAssignments(count);
+					const ongoing = forThisVehicle.find(s => s.status === "ongoing");
+					setOngoingServiceId(ongoing ? ongoing.id : null);
 				}
 			} catch {
 				if (!cancelled) setAssignmentCheckError("Unable to verify active assignments right now.");
@@ -189,6 +193,11 @@ export function VehicleDetailPage() {
 				<div>
 					<h1 className="text-2xl font-bold text-gray-900 dark:text-white">{vehicle.licensePlate}</h1>
 					<p className="mt-1 text-sm text-gray-600 dark:text-gray-400">Fleet vehicle profile and configuration</p>
+					{!isCheckingAssignments ? (
+						<div className="mt-2">
+							<InUseBadge serviceId={ongoingServiceId} />
+						</div>
+					) : null}
 				</div>
 				<EntityHeaderActions
 					entityLabel="Vehicle"
