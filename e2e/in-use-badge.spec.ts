@@ -49,6 +49,7 @@ test.describe('In use badge', () => {
         await page.getByRole('button', { name: 'Start Service' }).click();
         await page.getByRole('button', { name: 'Confirm transition' }).click();
         await expect(page.getByRole('button', { name: 'Complete Service' })).toBeVisible();
+        await expect(page.getByText(/Last edited by Administrator/)).toBeVisible();
 
         // Vehicle now shows In use, and the badge links to the service.
         await page.goto('/vehicles');

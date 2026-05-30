@@ -21,13 +21,25 @@ const VALID_TRANSITIONS: Record<string, string[]> = {
     cancelled: [],
 };
 
-function mapToService(record: Service) {
-    const { vehicleSnapshot, driverSnapshot, guideSnapshot, createdById, updatedById, ...rest } = record;
+const includeUsers = {
+    createdBy: { select: { id: true, name: true } },
+    updatedBy: { select: { id: true, name: true } },
+};
+
+type ServiceWithUsers = Service & {
+    createdBy: { id: number; name: string } | null;
+    updatedBy: { id: number; name: string } | null;
+};
+
+function mapToService(record: ServiceWithUsers) {
+    const { vehicleSnapshot, driverSnapshot, guideSnapshot, createdById, updatedById, createdBy, updatedBy, ...rest } = record;
     return {
         ...rest,
         vehicle: vehicleSnapshot,
         driver: driverSnapshot,
         guide: guideSnapshot ?? undefined,
+        createdBy,
+        updatedBy,
     };
 }
 
@@ -35,6 +47,7 @@ router.get("/services", requireAuth, async (req, res) => {
     try {
         const records = await prisma.service.findMany({
             orderBy: { scheduledAt: "desc" },
+            include: includeUsers,
         });
         res.json({ success: true, data: records.map(mapToService) });
     } catch {
@@ -46,6 +59,7 @@ router.get("/services/:id", requireAuth, async (req, res) => {
     try {
         const record = await prisma.service.findUnique({
             where: { id: Number(req.params.id) },
+            include: includeUsers,
         });
         if (!record) {
             res.status(404).json({ success: false, error: "Service not found" });
@@ -94,6 +108,7 @@ router.post("/services", requireAuth, validate(serviceCreateSchema), async (req,
                 guideSnapshot: guide ?? undefined,
                 createdById: userId,
             },
+            include: includeUsers,
         });
         res.status(201).json({ success: true, data: mapToService(record) });
     } catch {
@@ -140,6 +155,7 @@ router.put("/services/:id", requireAuth, validate(serviceUpdateSchema), async (r
         const record = await prisma.service.update({
             where: { id },
             data,
+            include: includeUsers,
         });
         res.json({ success: true, data: mapToService(record) });
     } catch {
@@ -185,6 +201,7 @@ router.patch("/services/:id/status", requireAuth, validate(serviceStatusSchema),
         const record = await prisma.service.update({
             where: { id: Number(req.params.id) },
             data: { status, updatedById: userId },
+            include: includeUsers,
         });
         res.json({ success: true, data: mapToService(record) });
     } catch {
