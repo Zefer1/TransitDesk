@@ -76,6 +76,14 @@ router.post("/services", requireAuth, validate(serviceCreateSchema), async (req,
         const { vehicle, driver, guide, ...rest } = req.body;
         const userId = req.user!.id;
 
+        if (rest.passengerQuantity > vehicle.passengerCapacity) {
+            res.status(422).json({
+                success: false,
+                error: `Passenger quantity (${rest.passengerQuantity}) exceeds the vehicle capacity (${vehicle.passengerCapacity}).`,
+            });
+            return;
+        }
+
         const resourceIds = {
             vehicleId: snapshotId(vehicle),
             driverId: snapshotId(driver),
@@ -125,6 +133,16 @@ router.put("/services/:id", requireAuth, validate(serviceUpdateSchema), async (r
         const current = await prisma.service.findUnique({ where: { id } });
         if (!current) {
             res.status(404).json({ success: false, error: "Service not found" });
+            return;
+        }
+
+        const effectivePassengers = rest.passengerQuantity ?? current.passengerQuantity;
+        const effectiveCapacity = (vehicle ?? (current.vehicleSnapshot as { passengerCapacity?: number }))?.passengerCapacity;
+        if (effectivePassengers != null && effectiveCapacity != null && effectivePassengers > effectiveCapacity) {
+            res.status(422).json({
+                success: false,
+                error: `Passenger quantity (${effectivePassengers}) exceeds the vehicle capacity (${effectiveCapacity}).`,
+            });
             return;
         }
 
