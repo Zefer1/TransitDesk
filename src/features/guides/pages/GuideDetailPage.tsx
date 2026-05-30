@@ -11,6 +11,7 @@ import { EntityDeleteModal } from "../../../components/EntityDeleteModal";
 import { EditSectionLayout } from "../../../components/EditSectionLayout";
 import { GuideForm } from "../components/GuideForm";
 import { EntityHeaderActions } from "../../../components/EntityHeaderActions";
+import { InUseBadge } from "../../../components/InUseBadge";
 
 export function GuideDetailPage() {
 	const navigate = useNavigate();
@@ -29,6 +30,7 @@ export function GuideDetailPage() {
 	const [isDeleting, setIsDeleting] = useState(false);
 
 	const [activeAssignments, setActiveAssignments] = useState(0);
+	const [ongoingServiceId, setOngoingServiceId] = useState<number | null>(null);
 	const [isCheckingAssignments, setIsCheckingAssignments] = useState(false);
 	const [assignmentCheckError, setAssignmentCheckError] = useState<string | null>(null);
 
@@ -75,11 +77,13 @@ export function GuideDetailPage() {
 			try {
 				const response = await listServices();
 				if (!cancelled) {
-					const count = response.data.filter(
-						s => s.guide?.id === guide!.id &&
-						(s.status === "scheduled" || s.status === "ongoing")
+					const forThisGuide = response.data.filter(s => s.guide?.id === guide!.id);
+					const count = forThisGuide.filter(
+						s => s.status === "scheduled" || s.status === "ongoing"
 					).length;
 					setActiveAssignments(count);
+					const ongoing = forThisGuide.find(s => s.status === "ongoing");
+					setOngoingServiceId(ongoing ? ongoing.id : null);
 				}
 			} catch {
 				if (!cancelled) setAssignmentCheckError("Unable to verify active assignments right now.");
@@ -189,6 +193,11 @@ export function GuideDetailPage() {
 				<div>
 					<h1 className="text-2xl font-bold text-gray-900 dark:text-white">{guide.name}</h1>
 					<p className="mt-1 text-sm text-gray-600 dark:text-gray-400">Guide profile and assignment information</p>
+					{!isCheckingAssignments ? (
+						<div className="mt-2">
+							<InUseBadge serviceId={ongoingServiceId} />
+						</div>
+					) : null}
 				</div>
 				<EntityHeaderActions
 					entityLabel="Guide"
