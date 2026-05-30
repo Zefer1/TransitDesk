@@ -56,10 +56,10 @@ test.describe('In use badge', () => {
         await page.getByRole('link', { name: /In use/ }).click();
         await expect(page).toHaveURL(new RegExp(`/services/${serviceId}$`));
 
-        // Driver shows the same.
+        // Driver shows the same, labelled Active.
         await page.goto('/drivers');
         await page.getByRole('button', { name: 'View driver Test Driver' }).click();
-        await page.getByRole('link', { name: /In use/ }).click();
+        await page.getByRole('link', { name: 'Active' }).click();
         await expect(page).toHaveURL(new RegExp(`/services/${serviceId}$`));
 
         // Complete the service so it does not leave the vehicle ongoing for later specs.
