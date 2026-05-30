@@ -53,7 +53,7 @@ export function useServiceAssignmentOptions(): UseServiceAssignmentOptionsResult
 					return;
 				}
 
-				setVehicleOptions(vehiclesResponse.data);
+				setVehicleOptions(vehiclesResponse.data.filter((vehicle) => vehicle.active !== false));
 				setDriverOptions(driversResponse.data);
 				setGuideOptions(guidesResponse.data);
 			} catch (error) {
