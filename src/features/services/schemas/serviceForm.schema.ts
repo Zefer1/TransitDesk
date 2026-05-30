@@ -66,6 +66,12 @@ export const serviceCreateSchema = z.object({
   driver: driverSchema,
   guide: guideSchema.optional(),
   notes: z.string().trim().optional(),
-});
+}).refine(
+  (data) => data.passengerQuantity <= data.vehicle.passengerCapacity,
+  {
+    message: "Passenger quantity exceeds the vehicle capacity",
+    path: ["passengerQuantity"],
+  },
+);
 
 export type ValidatedServiceCreateValues = z.output<typeof serviceCreateSchema>;
