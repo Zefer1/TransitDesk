@@ -54,6 +54,16 @@ test.describe('Services CRUD', () => {
         await expect(page.getByText(/Created by Administrator/)).toBeVisible();
     });
 
+    test('blocks passenger quantity above the vehicle capacity', async ({ page }) => {
+        await page.getByRole('link', { name: '+ New Service' }).click();
+        await fillServiceForm(page, 'Over Capacity', 'Tour');
+        await page.getByLabel('Passenger quantity').fill('20');
+        await page.getByRole('button', { name: 'Create Service' }).click();
+
+        await expect(page).toHaveURL('/services/new');
+        await expect(page.getByText(/exceeds the vehicle capacity/i)).toBeVisible();
+    });
+
     test('guardrail blocks deleting a driver with an active service', async ({ page }) => {
         await page.getByRole('link', { name: '+ New Service' }).click();
         await fillServiceForm(page, 'Guardrail Test Service', 'Tour');
