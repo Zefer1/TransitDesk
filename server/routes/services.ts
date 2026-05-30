@@ -84,6 +84,14 @@ router.post("/services", requireAuth, validate(serviceCreateSchema), async (req,
             return;
         }
 
+        if (vehicle.active === false) {
+            res.status(422).json({
+                success: false,
+                error: "This vehicle is inactive and cannot be assigned to a service.",
+            });
+            return;
+        }
+
         const resourceIds = {
             vehicleId: snapshotId(vehicle),
             driverId: snapshotId(driver),
@@ -142,6 +150,14 @@ router.put("/services/:id", requireAuth, validate(serviceUpdateSchema), async (r
             res.status(422).json({
                 success: false,
                 error: `Passenger quantity (${effectivePassengers}) exceeds the vehicle capacity (${effectiveCapacity}).`,
+            });
+            return;
+        }
+
+        if (vehicle && vehicle.active === false) {
+            res.status(422).json({
+                success: false,
+                error: "This vehicle is inactive and cannot be assigned to a service.",
             });
             return;
         }
