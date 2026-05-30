@@ -195,7 +195,7 @@ export function DriverDetailPage() {
 					<p className="mt-1 text-sm text-gray-600 dark:text-gray-400">Driver profile and assignment information</p>
 					{!isCheckingAssignments ? (
 						<div className="mt-2">
-							<InUseBadge serviceId={ongoingServiceId} />
+							<InUseBadge serviceId={ongoingServiceId} activeLabel="Active" />
 						</div>
 					) : null}
 				</div>
