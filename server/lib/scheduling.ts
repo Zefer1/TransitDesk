@@ -87,6 +87,13 @@ interface OngoingQuery extends ResourceIds {
     excludeId?: number;
 }
 
+export async function hasActiveServicesForVehicle(vehicleId: number): Promise<boolean> {
+    const candidates = await prisma.service.findMany({
+        where: { status: { in: [...ACTIVE_STATUSES] } },
+    });
+    return candidates.some((service) => snapshotId(service.vehicleSnapshot) === vehicleId);
+}
+
 export async function findOngoingConflicts(query: OngoingQuery): Promise<Conflict[]> {
     const candidates = await prisma.service.findMany({
         where: { status: "ongoing" },

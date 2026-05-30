@@ -3,6 +3,7 @@ import prisma from "../lib/prisma.js";
 import { requireAuth } from "../middleware/requireAuth.js";
 import { validate } from "../middleware/validate.js";
 import { vehicleCreateSchema, vehicleUpdateSchema } from "../schemas/vehicles.schema.js";
+import { hasActiveServicesForVehicle } from "../lib/scheduling.js";
 
 const router = Router();
 
@@ -39,6 +40,17 @@ router.post("/vehicles", requireAuth, validate(vehicleCreateSchema), async (req,
 
 router.put("/vehicles/:id", requireAuth, validate(vehicleUpdateSchema), async (req, res) => {
     try {
+        if (req.body.active === false) {
+            const inUse = await hasActiveServicesForVehicle(Number(req.params.id));
+            if (inUse) {
+                res.status(422).json({
+                    success: false,
+                    error: "Cannot deactivate a vehicle that is assigned to a scheduled or ongoing service.",
+                });
+                return;
+            }
+        }
+
         const vehicle = await prisma.vehicle.update({
             where: { id: Number(req.params.id) },
             data: req.body,
