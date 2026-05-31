@@ -42,6 +42,22 @@ test.describe('User management (admin)', () => {
         await expect(page.getByRole('cell', { name: 'tester1' })).toBeHidden();
     });
 
+    test('a super admin can create another super admin who cannot be deleted', async ({ page }) => {
+        await loginAs(page, 'admin', 'admin123');
+        await page.goto('/settings');
+
+        await page.getByRole('button', { name: 'Add user' }).click();
+        const dialog = page.getByRole('dialog');
+        await dialog.getByLabel(/^Username/).fill('superx');
+        await dialog.getByLabel(/^Name/).fill('Super X');
+        await dialog.getByLabel(/^Password/).fill('password123');
+        await dialog.getByLabel(/^Role/).selectOption('SUPER_ADMIN');
+        await dialog.getByRole('button', { name: 'Create user' }).click();
+
+        await expect(page.getByRole('cell', { name: 'superx' })).toBeVisible();
+        await expect(page.getByRole('button', { name: 'Delete user Super X' })).toBeDisabled();
+    });
+
     test('employee cannot see the Users section', async ({ page }) => {
         await loginAs(page, 'admin', 'admin123');
         await page.goto('/settings');
