@@ -11,11 +11,21 @@ const router = Router();
 
 const SALT_ROUNDS = 10;
 
+const userSelect = {
+    id: true,
+    username: true,
+    name: true,
+    role: true,
+    createdAt: true,
+    updatedAt: true,
+    updatedBy: { select: { id: true, name: true } },
+};
+
 router.get("/users", requireAuth, requireAdmin, async (req, res) => {
     try {
         const users = await prisma.user.findMany({
             orderBy: { createdAt: "desc" },
-            select: { id: true, username: true, name: true, role: true, createdAt: true, updatedAt: true },
+            select: userSelect,
         });
         res.json({ success: true, data: users });
     } catch {
@@ -36,7 +46,7 @@ router.post("/users", requireAuth, requireAdmin, validate(userCreateSchema), asy
 
         const user = await prisma.user.create({
             data: { username, password: hashedPassword, name, role },
-            select: { id: true, username: true, name: true, role: true, createdAt: true, updatedAt: true },
+            select: userSelect,
         });
         res.status(201).json({ success: true, data: user });
     } catch {
@@ -48,7 +58,7 @@ router.patch("/users/:id", requireAuth, requireAdmin, validate(userUpdateSchema)
     try {
         const { name, password, role } = req.body;
         const id = Number(req.params.id);
-        const data: Prisma.UserUncheckedUpdateInput = {};
+        const data: Prisma.UserUncheckedUpdateInput = { updatedById: req.user!.id };
 
         if (name !== undefined) data.name = name;
         if (password !== undefined) data.password = await bcrypt.hash(password, SALT_ROUNDS);
@@ -79,7 +89,7 @@ router.patch("/users/:id", requireAuth, requireAdmin, validate(userUpdateSchema)
         const user = await prisma.user.update({
             where: { id },
             data,
-            select: { id: true, username: true, name: true, role: true, createdAt: true, updatedAt: true },
+            select: userSelect,
         });
         res.json({ success: true, data: user });
     } catch {
