@@ -26,11 +26,6 @@ export function DriversListPage() {
 		resetFilters,
 	} = useDriverFilters(drivers);
 
-	/**
-	 * Fetch all drivers from the API when the page mounts (or when a retry is triggered).
-	 * The isMounted flag prevents React state updates after the component unmounts,
-	 * which can happen if the user navigates away before the API call finishes.
-	 */
 	useEffect(() => {
 		let isMounted = true;
 
