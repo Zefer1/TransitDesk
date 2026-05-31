@@ -12,4 +12,5 @@ export const userCreateSchema = z.object({
 export const userUpdateSchema = z.object({
     name: z.string().trim().min(1, "Name is required").optional(),
     password: z.string().min(8, "Password must be at least 8 characters").optional(),
+    role: z.enum(ROLES).optional(),
 });
