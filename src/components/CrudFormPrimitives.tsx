@@ -178,65 +178,6 @@ export function CrudSelectInput({
 	);
 }
 
-type CrudTextAreaInputProps = {
-	label: string;
-	value: string;
-	onChange: (value: string) => void;
-	error?: string;
-	hint?: string;
-	placeholder?: string;
-	required?: boolean;
-	disabled?: boolean;
-	rows?: number;
-};
-
-export function CrudTextAreaInput({
-	label,
-	value,
-	onChange,
-	error,
-	hint,
-	placeholder,
-	required = false,
-	disabled = false,
-	rows = 4,
-}: CrudTextAreaInputProps) {
-	const id = useId();
-	const hintId = hint ? `${id}-hint` : undefined;
-	const errorId = error ? `${id}-error` : undefined;
-
-	return (
-		<div className="flex flex-col gap-2">
-			<label htmlFor={id} className="text-sm font-medium text-gray-700 dark:text-gray-300">
-				{label}
-				{required ? <span className="ml-1 text-red-600 dark:text-red-400">*</span> : null}
-			</label>
-			<textarea
-				id={id}
-				value={value}
-				onChange={(event) => onChange(event.target.value)}
-				placeholder={placeholder}
-				required={required}
-				disabled={disabled}
-				rows={rows}
-				aria-invalid={Boolean(error)}
-				aria-describedby={describedBy(hintId, errorId)}
-				className={inputClassName(Boolean(error))}
-			/>
-			{hint ? (
-				<p id={hintId} className="text-xs text-gray-500 dark:text-gray-400">
-					{hint}
-				</p>
-			) : null}
-			{error ? (
-				<p id={errorId} role="alert" className="text-sm text-red-600 dark:text-red-400">
-					{error}
-				</p>
-			) : null}
-		</div>
-	);
-}
-
 type CrudFormActionsProps = {
 	submitLabel: string;
 	isSubmitting?: boolean;
