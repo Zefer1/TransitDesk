@@ -11,7 +11,8 @@ const COMPANY_STORAGE_KEY = 'transitdesk:company:v1';
 export function SettingsPage() {
   const { addToast } = useToast();
   const { theme, toggleTheme } = useTheme();
-  const isAdmin = getUser()?.role === 'ADMIN';
+  const role = getUser()?.role;
+  const isAdmin = role === 'ADMIN' || role === 'SUPER_ADMIN';
 
   const [form, setForm] = useState(() => {
     const saved = localStorage.getItem(COMPANY_STORAGE_KEY);
