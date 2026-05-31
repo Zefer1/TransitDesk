@@ -21,6 +21,7 @@ export interface CreateUserInput {
 export interface UpdateUserInput {
 	name?: string;
 	password?: string;
+	role?: UserRole;
 }
 
 export async function listUsers(): Promise<User[]> {

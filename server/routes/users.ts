@@ -46,14 +46,38 @@ router.post("/users", requireAuth, requireAdmin, validate(userCreateSchema), asy
 
 router.patch("/users/:id", requireAuth, requireAdmin, validate(userUpdateSchema), async (req, res) => {
     try {
-        const { name, password } = req.body;
+        const { name, password, role } = req.body;
+        const id = Number(req.params.id);
         const data: Prisma.UserUncheckedUpdateInput = {};
 
         if (name !== undefined) data.name = name;
         if (password !== undefined) data.password = await bcrypt.hash(password, SALT_ROUNDS);
 
+        if (role !== undefined) {
+            const target = await prisma.user.findUnique({ where: { id } });
+            if (!target) {
+                res.status(404).json({ success: false, error: "User not found" });
+                return;
+            }
+            if (role !== target.role) {
+                if (id === req.user!.id) {
+                    res.status(403).json({ success: false, error: "You cannot change your own role." });
+                    return;
+                }
+                if (target.role === "SUPER_ADMIN") {
+                    res.status(403).json({ success: false, error: "A Super Admin's role cannot be changed." });
+                    return;
+                }
+                if (role === "SUPER_ADMIN" && req.user!.role !== "SUPER_ADMIN") {
+                    res.status(403).json({ success: false, error: "Only a Super Admin can grant the Super Admin role." });
+                    return;
+                }
+                data.role = role;
+            }
+        }
+
         const user = await prisma.user.update({
-            where: { id: Number(req.params.id) },
+            where: { id },
             data,
             select: { id: true, username: true, name: true, role: true, createdAt: true, updatedAt: true },
         });
