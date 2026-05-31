@@ -1,4 +1,3 @@
-// Route constants below prevent path-string duplication in links and navigations.
 export const APP_ROUTES = {
   root: '/',
   services: '/services',

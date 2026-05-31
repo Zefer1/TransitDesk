@@ -29,13 +29,13 @@ interface Interval {
     end: number;
 }
 
-export function serviceInterval(scheduledAt: Date, durationMin: number | null): Interval {
+function serviceInterval(scheduledAt: Date, durationMin: number | null): Interval {
     const start = scheduledAt.getTime();
     const end = durationMin ? start + durationMin * 60_000 : start;
     return { start, end };
 }
 
-export function intervalsConflict(a: Interval, b: Interval): boolean {
+function intervalsConflict(a: Interval, b: Interval): boolean {
     return a.start === b.start || (a.start < b.end && b.start < a.end);
 }
 

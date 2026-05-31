@@ -21,6 +21,12 @@ const VALID_TRANSITIONS: Record<string, string[]> = {
     cancelled: [],
 };
 
+const INACTIVE_VEHICLE_ERROR = "This vehicle is inactive and cannot be assigned to a service.";
+
+function capacityError(passengers: number, capacity: number): string {
+    return `Passenger quantity (${passengers}) exceeds the vehicle capacity (${capacity}).`;
+}
+
 const includeUsers = {
     createdBy: { select: { id: true, name: true } },
     updatedBy: { select: { id: true, name: true } },
@@ -77,18 +83,12 @@ router.post("/services", requireAuth, validate(serviceCreateSchema), async (req,
         const userId = req.user!.id;
 
         if (rest.passengerQuantity > vehicle.passengerCapacity) {
-            res.status(422).json({
-                success: false,
-                error: `Passenger quantity (${rest.passengerQuantity}) exceeds the vehicle capacity (${vehicle.passengerCapacity}).`,
-            });
+            res.status(422).json({ success: false, error: capacityError(rest.passengerQuantity, vehicle.passengerCapacity) });
             return;
         }
 
         if (vehicle.active === false) {
-            res.status(422).json({
-                success: false,
-                error: "This vehicle is inactive and cannot be assigned to a service.",
-            });
+            res.status(422).json({ success: false, error: INACTIVE_VEHICLE_ERROR });
             return;
         }
 
@@ -149,19 +149,13 @@ router.put("/services/:id", requireAuth, validate(serviceUpdateSchema), async (r
             const effectivePassengers = rest.passengerQuantity ?? current.passengerQuantity;
             const effectiveCapacity = (vehicle ?? (current.vehicleSnapshot as { passengerCapacity?: number }))?.passengerCapacity;
             if (effectivePassengers != null && effectiveCapacity != null && effectivePassengers > effectiveCapacity) {
-                res.status(422).json({
-                    success: false,
-                    error: `Passenger quantity (${effectivePassengers}) exceeds the vehicle capacity (${effectiveCapacity}).`,
-                });
+                res.status(422).json({ success: false, error: capacityError(effectivePassengers, effectiveCapacity) });
                 return;
             }
         }
 
         if (vehicle && vehicle.active === false) {
-            res.status(422).json({
-                success: false,
-                error: "This vehicle is inactive and cannot be assigned to a service.",
-            });
+            res.status(422).json({ success: false, error: INACTIVE_VEHICLE_ERROR });
             return;
         }
 
