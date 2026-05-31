@@ -20,6 +20,14 @@ const ROLE_OPTIONS: { label: string; value: UserRole }[] = [
 	{ label: "Admin", value: "ADMIN" },
 ];
 
+const SUPER_ADMIN_OPTION: { label: string; value: UserRole } = { label: "Super Admin", value: "SUPER_ADMIN" };
+
+function roleLabel(role: UserRole): string {
+	if (role === "SUPER_ADMIN") return "Super Admin";
+	if (role === "ADMIN") return "Admin";
+	return "Employee";
+}
+
 type FormState = {
 	username: string;
 	name: string;
@@ -32,6 +40,7 @@ const EMPTY_FORM: FormState = { username: "", name: "", password: "", role: "EMP
 export function UsersSection() {
 	const { addToast } = useToast();
 	const currentUser = getUser();
+	const roleOptions = currentUser?.role === "SUPER_ADMIN" ? [...ROLE_OPTIONS, SUPER_ADMIN_OPTION] : ROLE_OPTIONS;
 
 	const [users, setUsers] = useState<User[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
@@ -165,7 +174,7 @@ export function UsersSection() {
 								<tr key={user.id}>
 									<td className="px-4 py-3 text-sm text-gray-900 dark:text-white">{user.name}</td>
 									<td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{user.username}</td>
-									<td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{user.role === "ADMIN" ? "Admin" : "Employee"}</td>
+									<td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{roleLabel(user.role)}</td>
 									<td className="px-4 py-3 text-right text-sm">
 										<div className="flex justify-end gap-2">
 											<button
@@ -179,9 +188,15 @@ export function UsersSection() {
 											<button
 												type="button"
 												onClick={() => setDeleteTarget(user)}
-												disabled={currentUser?.id === user.id}
+												disabled={currentUser?.id === user.id || user.role === "SUPER_ADMIN"}
 												aria-label={`Delete user ${user.name}`}
-												title={currentUser?.id === user.id ? "You cannot delete your own account" : undefined}
+												title={
+													user.role === "SUPER_ADMIN"
+														? "A Super Admin cannot be deleted"
+														: currentUser?.id === user.id
+															? "You cannot delete your own account"
+															: undefined
+												}
 												className="rounded-md border border-red-300 dark:border-red-700 px-2 py-1 text-xs font-medium text-red-600 dark:text-red-400 transition hover:bg-red-50 dark:hover:bg-red-900/20 disabled:cursor-not-allowed disabled:opacity-50"
 											>
 												Delete
@@ -216,13 +231,13 @@ export function UsersSection() {
 					/>
 
 					{editing ? (
-						<CrudTextInput label="Role" value={form.role === "ADMIN" ? "Admin" : "Employee"} onChange={() => {}} disabled hint="Role cannot be changed." />
+						<CrudTextInput label="Role" value={roleLabel(form.role)} onChange={() => {}} disabled hint="Role cannot be changed." />
 					) : (
 						<CrudSelectInput
 							label="Role"
 							value={form.role}
 							onChange={(value) => setForm((c) => ({ ...c, role: value as UserRole }))}
-							options={ROLE_OPTIONS}
+							options={roleOptions}
 							required
 						/>
 					)}

@@ -26,6 +26,12 @@ router.get("/users", requireAuth, requireAdmin, async (req, res) => {
 router.post("/users", requireAuth, requireAdmin, validate(userCreateSchema), async (req, res) => {
     try {
         const { username, password, name, role } = req.body;
+
+        if (role === "SUPER_ADMIN" && req.user!.role !== "SUPER_ADMIN") {
+            res.status(403).json({ success: false, error: "Only a Super Admin can create a Super Admin." });
+            return;
+        }
+
         const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
         const user = await prisma.user.create({
@@ -59,10 +65,20 @@ router.patch("/users/:id", requireAuth, requireAdmin, validate(userUpdateSchema)
 
 router.delete("/users/:id", requireAuth, requireAdmin, async (req, res) => {
     try {
-        await prisma.user.delete({
-            where: { id: Number(req.params.id) },
-        });
-        res.json({ success: true, data: { id: Number(req.params.id) } });
+        const id = Number(req.params.id);
+
+        const target = await prisma.user.findUnique({ where: { id } });
+        if (!target) {
+            res.status(404).json({ success: false, error: "User not found" });
+            return;
+        }
+        if (target.role === "SUPER_ADMIN") {
+            res.status(403).json({ success: false, error: "A Super Admin cannot be deleted." });
+            return;
+        }
+
+        await prisma.user.delete({ where: { id } });
+        res.json({ success: true, data: { id } });
     } catch {
         res.status(500).json({ success: false, error: "Internal server error" });
     }
