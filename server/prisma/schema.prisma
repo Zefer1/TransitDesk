@@ -28,6 +28,10 @@ model User {
 
   servicesCreated Service[] @relation("CreatedBy")
   servicesUpdated Service[] @relation("UpdatedBy")
+
+  updatedById Int?
+  updatedBy   User?  @relation("UserUpdatedBy", fields: [updatedById], references: [id])
+  usersEdited User[] @relation("UserUpdatedBy")
 }
 
 model Vehicle {
