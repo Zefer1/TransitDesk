@@ -1,6 +1,6 @@
 import apiClient from "../lib/apiClient";
 
-export type UserRole = "ADMIN" | "EMPLOYEE";
+export type UserRole = "SUPER_ADMIN" | "ADMIN" | "EMPLOYEE";
 
 export interface User {
 	id: number;
