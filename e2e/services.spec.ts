@@ -97,6 +97,20 @@ test.describe('Services CRUD', () => {
         await expect(page.getByText('ongoing', { exact: false })).toBeVisible();
     });
 
+    test('cancel a service with a reason saves the reason', async ({ page }) => {
+        await page.getByRole('link', { name: '+ New Service' }).click();
+        await fillServiceForm(page, 'Cancel With Reason', 'Tour');
+        await page.getByRole('button', { name: 'Create Service' }).click();
+        await expect(page).toHaveURL(/\/services\/\d+/, { timeout: 10000 });
+
+        await page.getByRole('button', { name: 'Cancel Service' }).click();
+        await page.getByLabel(/Cancellation reason/).fill('Customer no-show');
+        await page.getByRole('button', { name: 'Confirm transition' }).click();
+
+        await expect(page.getByText(/could not be saved/i)).toBeHidden();
+        await expect(page.getByText('Customer no-show')).toBeVisible();
+    });
+
     test('delete a service from the services list', async ({ page }) => {
         await page.getByRole('link', { name: '+ New Service' }).click();
 
