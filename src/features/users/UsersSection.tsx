@@ -42,6 +42,10 @@ export function UsersSection() {
 	const currentUser = getUser();
 	const roleOptions = currentUser?.role === "SUPER_ADMIN" ? [...ROLE_OPTIONS, SUPER_ADMIN_OPTION] : ROLE_OPTIONS;
 
+	function canEditRole(user: User): boolean {
+		return user.role !== "SUPER_ADMIN" && user.id !== currentUser?.id;
+	}
+
 	const [users, setUsers] = useState<User[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [loadError, setLoadError] = useState<string | null>(null);
@@ -95,9 +99,12 @@ export function UsersSection() {
 		setFormError(null);
 		try {
 			if (editing) {
-				const payload: { name: string; password?: string } = { name: form.name.trim() };
+				const payload: { name: string; password?: string; role?: UserRole } = { name: form.name.trim() };
 				if (form.password) {
 					payload.password = form.password;
+				}
+				if (canEditRole(editing) && form.role !== editing.role) {
+					payload.role = form.role;
 				}
 				await updateUser(editing.id, payload);
 				addToast("User updated.", "success");
@@ -230,7 +237,7 @@ export function UsersSection() {
 						hint={editing ? "Leave blank to keep the current password. Minimum 8 characters." : "Minimum 8 characters."}
 					/>
 
-					{editing ? (
+					{editing && !canEditRole(editing) ? (
 						<CrudTextInput label="Role" value={roleLabel(form.role)} onChange={() => {}} disabled hint="Role cannot be changed." />
 					) : (
 						<CrudSelectInput

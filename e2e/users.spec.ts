@@ -30,7 +30,7 @@ test.describe('User management (admin)', () => {
         await page.getByRole('button', { name: 'Edit user Test One' }).click();
         const editDialog = page.getByRole('dialog');
         await expect(editDialog.getByLabel(/^Username/)).toBeDisabled();
-        await expect(editDialog.getByLabel(/^Role/)).toBeDisabled();
+        await expect(editDialog.getByLabel(/^Role/)).toBeEnabled();
         await editDialog.getByLabel(/^Name/).fill('Test One Renamed');
         await editDialog.getByRole('button', { name: 'Save changes' }).click();
         await expect(page.getByRole('cell', { name: 'Test One Renamed', exact: true })).toBeVisible();
@@ -56,6 +56,27 @@ test.describe('User management (admin)', () => {
 
         await expect(page.getByRole('cell', { name: 'superx' })).toBeVisible();
         await expect(page.getByRole('button', { name: 'Delete user Super X' })).toBeDisabled();
+    });
+
+    test('an admin can change a user role', async ({ page }) => {
+        await loginAs(page, 'admin', 'admin123');
+        await page.goto('/settings');
+
+        await page.getByRole('button', { name: 'Add user' }).click();
+        const createDialog = page.getByRole('dialog');
+        await createDialog.getByLabel(/^Username/).fill('roley');
+        await createDialog.getByLabel(/^Name/).fill('Role User');
+        await createDialog.getByLabel(/^Password/).fill('password123');
+        await createDialog.getByLabel(/^Role/).selectOption('EMPLOYEE');
+        await createDialog.getByRole('button', { name: 'Create user' }).click();
+        await expect(page.getByRole('cell', { name: 'roley' })).toBeVisible();
+
+        await page.getByRole('button', { name: 'Edit user Role User' }).click();
+        const editDialog = page.getByRole('dialog');
+        await editDialog.getByLabel(/^Role/).selectOption('ADMIN');
+        await editDialog.getByRole('button', { name: 'Save changes' }).click();
+
+        await expect(page.getByRole('row', { name: /Role User/ })).toContainText('Admin');
     });
 
     test('employee cannot see the Users section', async ({ page }) => {
