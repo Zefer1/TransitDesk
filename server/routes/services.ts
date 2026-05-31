@@ -144,14 +144,17 @@ router.put("/services/:id", requireAuth, validate(serviceUpdateSchema), async (r
             return;
         }
 
-        const effectivePassengers = rest.passengerQuantity ?? current.passengerQuantity;
-        const effectiveCapacity = (vehicle ?? (current.vehicleSnapshot as { passengerCapacity?: number }))?.passengerCapacity;
-        if (effectivePassengers != null && effectiveCapacity != null && effectivePassengers > effectiveCapacity) {
-            res.status(422).json({
-                success: false,
-                error: `Passenger quantity (${effectivePassengers}) exceeds the vehicle capacity (${effectiveCapacity}).`,
-            });
-            return;
+        const changingAssignment = rest.passengerQuantity !== undefined || vehicle !== undefined;
+        if (changingAssignment) {
+            const effectivePassengers = rest.passengerQuantity ?? current.passengerQuantity;
+            const effectiveCapacity = (vehicle ?? (current.vehicleSnapshot as { passengerCapacity?: number }))?.passengerCapacity;
+            if (effectivePassengers != null && effectiveCapacity != null && effectivePassengers > effectiveCapacity) {
+                res.status(422).json({
+                    success: false,
+                    error: `Passenger quantity (${effectivePassengers}) exceeds the vehicle capacity (${effectiveCapacity}).`,
+                });
+                return;
+            }
         }
 
         if (vehicle && vehicle.active === false) {
