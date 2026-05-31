@@ -76,7 +76,9 @@ test.describe('User management (admin)', () => {
         await editDialog.getByLabel(/^Role/).selectOption('ADMIN');
         await editDialog.getByRole('button', { name: 'Save changes' }).click();
 
-        await expect(page.getByRole('row', { name: /Role User/ })).toContainText('Admin');
+        const row = page.getByRole('row', { name: /Role User/ });
+        await expect(row).toContainText('Admin');
+        await expect(row).toContainText('Administrator');
     });
 
     test('employee cannot see the Users section', async ({ page }) => {

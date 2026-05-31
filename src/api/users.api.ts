@@ -9,6 +9,7 @@ export interface User {
 	role: UserRole;
 	createdAt: string;
 	updatedAt: string;
+	updatedBy?: { id: number; name: string } | null;
 }
 
 export interface CreateUserInput {

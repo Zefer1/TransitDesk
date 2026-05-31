@@ -173,6 +173,7 @@ export function UsersSection() {
 								<th scope="col" className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400">Name</th>
 								<th scope="col" className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400">Username</th>
 								<th scope="col" className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400">Role</th>
+								<th scope="col" className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400">Last edited by</th>
 								<th scope="col" className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400">Actions</th>
 							</tr>
 						</thead>
@@ -182,6 +183,7 @@ export function UsersSection() {
 									<td className="px-4 py-3 text-sm text-gray-900 dark:text-white">{user.name}</td>
 									<td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{user.username}</td>
 									<td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{roleLabel(user.role)}</td>
+									<td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{user.updatedBy?.name ?? "Never edited"}</td>
 									<td className="px-4 py-3 text-right text-sm">
 										<div className="flex justify-end gap-2">
 											<button
