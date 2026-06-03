@@ -19,6 +19,7 @@ export type ServiceFormProps = {
 	isSubmitting?: boolean;
 	validationSchema?: typeof serviceCreateSchema;
 	mode?: ServiceFormMode;
+	onCancel?: () => void;
 };
 
 export type ServiceFormErrors = Record<string, string>;
