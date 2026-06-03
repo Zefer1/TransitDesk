@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useToast } from "../../../components/useToast";
 import { APP_ROUTES } from "../../../constants/routes";
 import { VehicleForm } from "../components/VehicleForm";
@@ -17,6 +17,7 @@ import type { ValidatedVehicleUpdateValues } from "../schemas/vehicleForm.schema
 export function VehicleDetailPage() {
 	const navigate = useNavigate();
 	const { id } = useParams<{ id: string }>();
+	const [searchParams, setSearchParams] = useSearchParams();
 	const { addToast } = useToast();
 
 	const [vehicle, setVehicle] = useState<Vehicle | null>(null);
@@ -24,8 +25,20 @@ export function VehicleDetailPage() {
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const [reloadKey, setReloadKey] = useState(0);
 
-	const [isEditing, setIsEditing] = useState(false);
+	const isEditing = searchParams.get("mode") === "edit";
 	const [isSaving, setIsSaving] = useState(false);
+
+	const beginEdit = () => {
+		const next = new URLSearchParams(searchParams);
+		next.set("mode", "edit");
+		setSearchParams(next);
+	};
+
+	const exitEdit = () => {
+		const next = new URLSearchParams(searchParams);
+		next.delete("mode");
+		setSearchParams(next);
+	};
 
 	const [isShowingDeleteConfirm, setIsShowingDeleteConfirm] = useState(false);
 	const [isDeleting, setIsDeleting] = useState(false);
@@ -102,7 +115,7 @@ export function VehicleDetailPage() {
 		try {
 			const response = await updateVehicle(values);
 			setVehicle(response.data);
-			setIsEditing(false);
+			exitEdit();
 			addToast("Vehicle updated successfully", "success");
 		} catch (error) {
 			addToast(extractApiError(error, "Failed to update vehicle"), "error");
@@ -181,7 +194,7 @@ export function VehicleDetailPage() {
 					submitLabel="Update Vehicle"
 					isSubmitting={isSaving}
 					mode="edit"
-					onCancel={() => setIsEditing(false)}
+					onCancel={exitEdit}
 				/>
 			</EditSectionLayout>
 		);
@@ -201,7 +214,7 @@ export function VehicleDetailPage() {
 				</div>
 				<EntityHeaderActions
 					entityLabel="Vehicle"
-					onEdit={() => setIsEditing(true)}
+					onEdit={beginEdit}
 					onOpenDeleteConfirm={() => setIsShowingDeleteConfirm(true)}
 					isCheckingAssignments={isCheckingAssignments}
 					activeAssignments={activeAssignments}

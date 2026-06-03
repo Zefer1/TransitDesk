@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useToast } from "../../../components/useToast";
 import { APP_ROUTES } from "../../../constants/routes";
 import { DriverForm } from "../components/DriverForm";
@@ -16,6 +16,7 @@ import type { ValidatedDriverUpdateValues } from "../schemas/driverForm.schema";
 export function DriverDetailPage() {
 	const navigate = useNavigate();
 	const { id } = useParams<{ id: string }>();
+	const [searchParams, setSearchParams] = useSearchParams();
 	const { addToast } = useToast();
 
 	const [driver, setDriver] = useState<Driver | null>(null);
@@ -23,8 +24,20 @@ export function DriverDetailPage() {
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const [reloadKey, setReloadKey] = useState(0);
 
-	const [isEditing, setIsEditing] = useState(false);
+	const isEditing = searchParams.get("mode") === "edit";
 	const [isSaving, setIsSaving] = useState(false);
+
+	const beginEdit = () => {
+		const next = new URLSearchParams(searchParams);
+		next.set("mode", "edit");
+		setSearchParams(next);
+	};
+
+	const exitEdit = () => {
+		const next = new URLSearchParams(searchParams);
+		next.delete("mode");
+		setSearchParams(next);
+	};
 
 	const [isShowingDeleteConfirm, setIsShowingDeleteConfirm] = useState(false);
 	const [isDeleting, setIsDeleting] = useState(false);
@@ -101,7 +114,7 @@ export function DriverDetailPage() {
 		try {
 			const response = await updateDriver(values);
 			setDriver(response.data);
-			setIsEditing(false);
+			exitEdit();
 			addToast("Driver updated successfully", "success");
 		} catch (error) {
 			const message = error instanceof Error ? error.message : "Failed to update driver";
@@ -181,7 +194,7 @@ export function DriverDetailPage() {
 					submitLabel="Update Driver"
 					isSubmitting={isSaving}
 					mode="edit"
-					onCancel={() => setIsEditing(false)}
+					onCancel={exitEdit}
 				/>
 			</EditSectionLayout>
 		);
@@ -201,7 +214,7 @@ export function DriverDetailPage() {
 				</div>
 				<EntityHeaderActions
 					entityLabel="Driver"
-					onEdit={() => setIsEditing(true)}
+					onEdit={beginEdit}
 					onOpenDeleteConfirm={() => setIsShowingDeleteConfirm(true)}
 					isCheckingAssignments={isCheckingAssignments}
 					activeAssignments={activeAssignments}

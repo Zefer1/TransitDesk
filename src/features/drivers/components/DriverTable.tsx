@@ -14,7 +14,7 @@ export function DriverTable({ drivers }: DriverTableProps) {
 	};
 
 	const goToEdit = (driverId: number) => {
-		navigate(`/drivers/${driverId}`);
+		navigate(`/drivers/${driverId}?mode=edit`);
 	};
 
 	const renderActions = (driver: Driver) => (
@@ -120,7 +120,7 @@ export function DriverTable({ drivers }: DriverTableProps) {
 							<tr
 								key={driver.id}
 								className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 focus-within:bg-gray-50"
-
+								role="button"
 								tabIndex={0}
 								aria-label={`Open details for driver ${driver.name}`}
 								onClick={() => goToDetail(driver.id)}
