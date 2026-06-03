@@ -22,7 +22,8 @@ type DriverFormProps = {
 	submitLabel?: string;
 	isSubmitting?: boolean;
 	mode?: DriverFormMode;
-	cancelTo: string;
+	cancelTo?: string;
+	onCancel?: () => void;
 };
 
 type DriverFormState = {
@@ -53,6 +54,7 @@ export function DriverForm({
 	isSubmitting = false,
 	mode = "create",
 	cancelTo,
+	onCancel,
 }: DriverFormProps) {
 	const [formState, setFormState] = useState<DriverFormState>(buildInitialState(initialData));
 	const [errors, setErrors] = useState<DriverFormErrors>({});
@@ -167,6 +169,7 @@ export function DriverForm({
 			<CrudFormActions
 				submitLabel={submitLabel}
 				cancelTo={cancelTo}
+				onCancel={onCancel}
 				isSubmitting={isSubmitting}
 			/>
 		</CrudForm>

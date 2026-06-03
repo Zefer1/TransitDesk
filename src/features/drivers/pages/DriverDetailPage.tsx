@@ -181,7 +181,7 @@ export function DriverDetailPage() {
 					submitLabel="Update Driver"
 					isSubmitting={isSaving}
 					mode="edit"
-					cancelTo={`/drivers/${driver.id}`}
+					onCancel={() => setIsEditing(false)}
 				/>
 			</EditSectionLayout>
 		);
