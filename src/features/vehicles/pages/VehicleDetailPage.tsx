@@ -181,7 +181,7 @@ export function VehicleDetailPage() {
 					submitLabel="Update Vehicle"
 					isSubmitting={isSaving}
 					mode="edit"
-					cancelTo={`/vehicles/${vehicle.id}`}
+					onCancel={() => setIsEditing(false)}
 				/>
 			</EditSectionLayout>
 		);
