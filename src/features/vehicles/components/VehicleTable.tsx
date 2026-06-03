@@ -13,7 +13,7 @@ export function VehicleTable({ vehicles }: VehicleTableProps) {
 	};
 
 	const goToEdit = (vehicleId: number) => {
-		navigate(`/vehicles/${vehicleId}`);
+		navigate(`/vehicles/${vehicleId}?mode=edit`);
 	};
 
 	const renderActions = (vehicle: Vehicle) => (
@@ -128,7 +128,7 @@ export function VehicleTable({ vehicles }: VehicleTableProps) {
 								key={vehicle.id}
 								className="cursor-pointer transition hover:bg-gray-50 dark:hover:bg-gray-700"
 								onClick={() => goToDetail(vehicle.id)}
-
+								role="button"
 								tabIndex={0}
 								onKeyDown={(event) => {
 									if (event.key === "Enter" || event.key === " ") {
