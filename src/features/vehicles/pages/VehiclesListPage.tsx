@@ -14,7 +14,7 @@ export function VehiclesListPage() {
 	const { addToast } = useToast();
 	const [vehicles, setVehicles] = useState<Vehicle[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
+	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const [reloadKey, setReloadKey] = useState(0);
 	const { filters, filteredVehicles, hasActiveFilters, setSearchFilter, setTypeFilter, setCapacityMinFilter, setCapacityMaxFilter, resetFilters } = useVehicleFilters(vehicles);
 
@@ -24,7 +24,7 @@ export function VehiclesListPage() {
 		const loadVehicles = async () => {
 			try {
 				setIsLoading(true);
-				setError(null);
+				setErrorMessage(null);
 
 				const response = await listVehicles();
 
@@ -39,7 +39,7 @@ export function VehiclesListPage() {
 				}
 
 				const message = err instanceof Error ? err.message : "Unable to load vehicles. Please try again.";
-				setError(message);
+				setErrorMessage(message);
 				addToast(message, "error");
 			} finally {
 				if (isMounted) {
@@ -65,7 +65,7 @@ export function VehiclesListPage() {
 			description="Manage fleet records, capacities, and assignment readiness."
 			primaryAction={{ label: "Create Vehicle", to: APP_ROUTES.newVehicle }}
 			isLoading={isLoading}
-			errorMessage={error}
+			errorMessage={errorMessage}
 			onRetry={handleRetry}
 			loadingLabel="Loading vehicles"
 			filters={
@@ -88,8 +88,9 @@ export function VehiclesListPage() {
 		>
 			{filteredVehicles.length === 0 ? (
 				<EmptyState
-					title="No vehicles match your filters"
-					description="Try adjusting your search or filter criteria."
+					title="No matching vehicles"
+					description="No vehicles match your current filters. Try broadening your search criteria."
+					action={{ label: "Reset filters", onClick: resetFilters }}
 				/>
 			) : (
 				<VehicleTable vehicles={filteredVehicles} />

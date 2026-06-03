@@ -3,6 +3,7 @@ import { SERVICE_STATUSES } from "../../../types/service.types";
 import { APP_ROUTES } from "../../../constants/routes";
 import { CrudListLayout } from "../../../components/CrudListLayout";
 import { EmptyState } from "../../../components/EmptyState";
+import { Modal } from "../../../components/Modal";
 import { useToast } from "../../../components/useToast";
 import { useServiceFilters } from "../../../hooks/useServiceFilters";
 import { deleteService, listServices } from "../../../api/services.api";
@@ -14,6 +15,8 @@ export function ServicesListPage() {
 	const [isLoading, setIsLoading] = useState(true);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const [reloadKey, setReloadKey] = useState(0);
+	const [deleteTarget, setDeleteTarget] = useState<Service | null>(null);
+	const [isDeleting, setIsDeleting] = useState(false);
 	const { addToast } = useToast();
 
 	const {
@@ -63,15 +66,31 @@ export function ServicesListPage() {
 		};
 	}, [addToast, reloadKey]);
 
-	const handleDelete = async (serviceId: number) => {
+	const openDelete = (serviceId: number) => {
+		const service = services.find((item) => item.id === serviceId);
+		if (service) {
+			setDeleteTarget(service);
+		}
+	};
+
+	const confirmDelete = async () => {
+		if (!deleteTarget) {
+			return;
+		}
+
+		setIsDeleting(true);
 		try {
 			setErrorMessage(null);
-			await deleteService(serviceId);
-			setServices((currentServices) => currentServices.filter((service) => service.id !== serviceId));
+			await deleteService(deleteTarget.id);
+			setServices((currentServices) => currentServices.filter((service) => service.id !== deleteTarget.id));
+			addToast("Service deleted successfully", "success");
+			setDeleteTarget(null);
 		} catch (error) {
 			const message = error instanceof Error ? error.message : "Unable to delete service.";
 			setErrorMessage(message);
 			addToast(message, "error");
+		} finally {
+			setIsDeleting(false);
 		}
 	};
 
@@ -142,32 +161,58 @@ export function ServicesListPage() {
 	);
 
 	return (
-		<CrudListLayout
-			title="Services"
-			description="Browse scheduled routes, monitor status, and open any service for details."
-			primaryAction={{ label: "Create Service", to: APP_ROUTES.newService }}
-			isLoading={isLoading}
-			errorMessage={errorMessage}
-			onRetry={handleRetry}
-			loadingLabel="Loading services"
-			filters={filtersNode}
-			isEmpty={services.length === 0}
-			emptyState={{
-				title: "No services yet",
-				description: "Create your first service to start managing routes.",
-				action: { label: "Create Service", to: APP_ROUTES.newService },
-			}}
-		>
-			{filteredServices.length === 0 ? (
-				<EmptyState
-					title="No matching services"
-					description="No services match your current filters. Try broadening your search criteria."
-					action={{ label: "Reset filters", onClick: resetFilters }}
-				/>
-			) : (
-				<ServiceTable services={filteredServices} onDelete={handleDelete} />
-			)}
-		</CrudListLayout>
+		<>
+			<CrudListLayout
+				title="Services"
+				description="Browse scheduled routes, monitor status, and open any service for details."
+				primaryAction={{ label: "Create Service", to: APP_ROUTES.newService }}
+				isLoading={isLoading}
+				errorMessage={errorMessage}
+				onRetry={handleRetry}
+				loadingLabel="Loading services"
+				filters={filtersNode}
+				isEmpty={services.length === 0}
+				emptyState={{
+					title: "No services yet",
+					description: "Create your first service to start managing routes.",
+					action: { label: "Create Service", to: APP_ROUTES.newService },
+				}}
+			>
+				{filteredServices.length === 0 ? (
+					<EmptyState
+						title="No matching services"
+						description="No services match your current filters. Try broadening your search criteria."
+						action={{ label: "Reset filters", onClick: resetFilters }}
+					/>
+				) : (
+					<ServiceTable services={filteredServices} onDelete={openDelete} />
+				)}
+			</CrudListLayout>
+
+			<Modal isOpen={deleteTarget !== null} title="Delete service" onClose={() => setDeleteTarget(null)}>
+				<p className="text-sm text-gray-600 dark:text-gray-400">
+					Are you sure you want to delete <strong>{deleteTarget?.description}</strong>? This action cannot be undone.
+				</p>
+				<div className="mt-6 flex justify-end gap-2">
+					<button
+						type="button"
+						onClick={() => setDeleteTarget(null)}
+						disabled={isDeleting}
+						className="rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 transition hover:bg-gray-100 dark:hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
+					>
+						Cancel
+					</button>
+					<button
+						type="button"
+						onClick={() => void confirmDelete()}
+						disabled={isDeleting}
+						className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+					>
+						{isDeleting ? "Deleting..." : "Delete service"}
+					</button>
+				</div>
+			</Modal>
+		</>
 	);
 }
 
