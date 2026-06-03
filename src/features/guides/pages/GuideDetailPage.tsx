@@ -181,7 +181,7 @@ export function GuideDetailPage() {
 					submitLabel="Update Guide"
 					isSubmitting={isSaving}
 					mode="edit"
-					cancelTo={`/guides/${guide.id}`}
+					onCancel={() => setIsEditing(false)}
 				/>
 			</EditSectionLayout>
 		);

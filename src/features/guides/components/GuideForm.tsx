@@ -21,7 +21,8 @@ type GuideFormProps = {
 	submitLabel?: string;
 	isSubmitting?: boolean;
 	mode?: GuideFormMode;
-	cancelTo: string;
+	cancelTo?: string;
+	onCancel?: () => void;
 };
 
 type GuideFormState = {
@@ -50,6 +51,7 @@ export function GuideForm({
 	isSubmitting = false,
 	mode = "create",
 	cancelTo,
+	onCancel,
 }: GuideFormProps) {
 	const [formState, setFormState] = useState<GuideFormState>(buildInitialState(initialData));
 	const [errors, setErrors] = useState<GuideFormErrors>({});
@@ -194,6 +196,7 @@ export function GuideForm({
 			<CrudFormActions
 				submitLabel={submitLabel}
 				cancelTo={cancelTo}
+				onCancel={onCancel}
 				isSubmitting={isSubmitting}
 			/>
 		</CrudForm>
