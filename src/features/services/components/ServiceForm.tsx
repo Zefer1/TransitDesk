@@ -33,6 +33,7 @@ export function ServiceForm({
 	isSubmitting = false,
 	validationSchema = serviceCreateSchema,
 	mode,
+	onCancel,
 }: ServiceFormProps) {
 	const resolvedMode: ServiceFormMode = mode ?? (initialData ? "edit" : "create");
 	const initialStatus = initialData?.status ?? "scheduled";
@@ -181,13 +182,25 @@ export function ServiceForm({
 						Capture service details, transport assignment, staffing, and passenger planning in one place.
 					</p>
 				</div>
-				<button
-					type="submit"
-					disabled={isSubmitting || isLockedByStatus}
-					className="inline-flex w-full items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
-				>
-					{isLockedByStatus ? "Locked" : isSubmitting ? "Saving..." : submitLabel}
-				</button>
+				<div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+					{onCancel ? (
+						<button
+							type="button"
+							onClick={onCancel}
+							disabled={isSubmitting}
+							className="inline-flex w-full items-center justify-center rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 transition hover:bg-gray-100 dark:hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+						>
+							Cancel
+						</button>
+					) : null}
+					<button
+						type="submit"
+						disabled={isSubmitting || isLockedByStatus}
+						className="inline-flex w-full items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+					>
+						{isLockedByStatus ? "Locked" : isSubmitting ? "Saving..." : submitLabel}
+					</button>
+				</div>
 			</div>
 
 			{isLockedByStatus ? (

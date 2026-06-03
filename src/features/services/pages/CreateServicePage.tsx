@@ -19,6 +19,7 @@ export function CreateServicePage() {
 		try {
 			const response = await createService(values);
 			navigate(`/services/${response.data.id}`);
+			addToast("Service created successfully", "success");
 		} catch (err) {
 			const message = extractApiError(err, "Failed to create service. Please try again.");
 			setError(message);
@@ -48,6 +49,7 @@ export function CreateServicePage() {
 					onSubmit={handleSubmit}
 					submitLabel="Create Service"
 					isSubmitting={isSubmitting}
+					onCancel={() => navigate("/services")}
 				/>
 			</div>
 		</div>

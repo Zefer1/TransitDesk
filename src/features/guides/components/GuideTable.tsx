@@ -13,7 +13,7 @@ export function GuideTable({ guides }: GuideTableProps) {
 	};
 
 	const goToEdit = (guideId: number) => {
-		navigate(`/guides/${guideId}`);
+		navigate(`/guides/${guideId}?mode=edit`);
 	};
 
 	const renderActions = (guide: Guide) => (
@@ -124,6 +124,7 @@ export function GuideTable({ guides }: GuideTableProps) {
 							<tr
 								key={guide.id}
 								className="cursor-pointer transition hover:bg-gray-50 dark:hover:bg-gray-700 focus-within:bg-gray-50"
+								role="button"
 								tabIndex={0}
 								aria-label={`Open details for guide ${guide.name}`}
 								onClick={() => goToDetail(guide.id)}
