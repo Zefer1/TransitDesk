@@ -1,6 +1,6 @@
 import './ServicePrintSheet.css';
 import type { Service } from '../../../types/service.types';
-import { formatDateTime } from '../utils/serviceFormatters';
+import { formatDateTime, formatTotalEstimatedTime } from '../utils/serviceFormatters';
 
 const COMPANY_STORAGE_KEY = 'transitdesk:company:v1';
 
@@ -55,7 +55,7 @@ export function ServicePrintSheet({ service }: ServicePrintSheetProps) {
         Service Sheet #{service.id}
       </h1>
       <p style={{ fontSize: '13px', color: '#555', marginBottom: '24px' }}>
-        {service.type} · {formatDateTime(service.scheduledAt)}
+        {service.type} · {formatDateTime(service.scheduledAt)} · <strong>{service.status.charAt(0).toUpperCase() + service.status.slice(1)}</strong>
       </p>
 
       <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '24px', fontSize: '13px' }}>
@@ -80,6 +80,18 @@ export function ServicePrintSheet({ service }: ServicePrintSheetProps) {
               <td style={{ padding: '6px 8px', verticalAlign: 'top' }}>{service.passengerQuantity}</td>
             </tr>
           )}
+          {service.distanceKm != null && (
+            <tr style={{ borderBottom: '1px solid #eee' }}>
+              <td style={{ padding: '6px 8px', fontWeight: 'bold', width: '160px', verticalAlign: 'top' }}>Distance</td>
+              <td style={{ padding: '6px 8px', verticalAlign: 'top' }}>{service.distanceKm} km</td>
+            </tr>
+          )}
+          {service.estimatedDurationMin != null && (
+            <tr style={{ borderBottom: '1px solid #eee' }}>
+              <td style={{ padding: '6px 8px', fontWeight: 'bold', width: '160px', verticalAlign: 'top' }}>Estimated duration</td>
+              <td style={{ padding: '6px 8px', verticalAlign: 'top' }}>{formatTotalEstimatedTime(service.estimatedDurationMin)}</td>
+            </tr>
+          )}
         </tbody>
       </table>
 
@@ -96,23 +108,50 @@ export function ServicePrintSheet({ service }: ServicePrintSheetProps) {
           </tr>
           <tr style={{ borderBottom: '1px solid #eee' }}>
             <td style={{ padding: '6px 8px', fontWeight: 'bold', width: '160px', verticalAlign: 'top' }}>Driver</td>
-            <td style={{ padding: '6px 8px', verticalAlign: 'top' }}>{service.driver.name}</td>
+            <td style={{ padding: '6px 8px', verticalAlign: 'top' }}>
+              {service.driver.name}
+              <br />
+              <span style={{ color: '#555' }}>License {service.driver.license} · {service.driver.entitledToDrive}</span>
+            </td>
           </tr>
           {service.guide && (
             <tr style={{ borderBottom: '1px solid #eee' }}>
               <td style={{ padding: '6px 8px', fontWeight: 'bold', width: '160px', verticalAlign: 'top' }}>Guide</td>
-              <td style={{ padding: '6px 8px', verticalAlign: 'top' }}>{service.guide.name}</td>
+              <td style={{ padding: '6px 8px', verticalAlign: 'top' }}>
+                {service.guide.name}
+                {service.guide.languages?.length ? (
+                  <>
+                    <br />
+                    <span style={{ color: '#555' }}>{service.guide.languages.join(', ')}</span>
+                  </>
+                ) : null}
+              </td>
             </tr>
           )}
         </tbody>
       </table>
 
       {service.notes && (
-        <div>
+        <div style={{ marginBottom: '24px' }}>
           <h2 style={{ fontSize: '14px', fontWeight: 'bold', marginBottom: '8px', borderBottom: '1px solid #ccc', paddingBottom: '4px' }}>
             Notes
           </h2>
           <p style={{ fontSize: '13px', whiteSpace: 'pre-line' }}>{service.notes}</p>
+        </div>
+      )}
+
+      {(service.createdBy || service.updatedBy) && (
+        <div style={{ fontSize: '11px', color: '#777', borderTop: '1px solid #eee', paddingTop: '12px' }}>
+          {service.createdBy && (
+            <p style={{ margin: '2px 0' }}>
+              Created by {service.createdBy.name}{service.createdAt ? ` on ${formatDateTime(service.createdAt)}` : ''}
+            </p>
+          )}
+          {service.updatedBy && (
+            <p style={{ margin: '2px 0' }}>
+              Last edited by {service.updatedBy.name}{service.updatedAt ? ` on ${formatDateTime(service.updatedAt)}` : ''}
+            </p>
+          )}
         </div>
       )}
     </div>
