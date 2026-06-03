@@ -22,7 +22,8 @@ type VehicleFormProps = {
 	submitLabel?: string;
 	isSubmitting?: boolean;
 	mode?: VehicleFormMode;
-	cancelTo: string;
+	cancelTo?: string;
+	onCancel?: () => void;
 };
 
 type VehicleFormState = {
@@ -67,6 +68,7 @@ export function VehicleForm({
 	isSubmitting = false,
 	mode = "create",
 	cancelTo,
+	onCancel,
 }: VehicleFormProps) {
 	const [formState, setFormState] = useState<VehicleFormState>(buildInitialState(initialData));
 	const [errors, setErrors] = useState<VehicleFormErrors>({});
@@ -230,7 +232,7 @@ export function VehicleForm({
 				</div>
 			)}
 
-			<CrudFormActions submitLabel={submitLabel} cancelTo={cancelTo} isSubmitting={isSubmitting} />
+			<CrudFormActions submitLabel={submitLabel} cancelTo={cancelTo} onCancel={onCancel} isSubmitting={isSubmitting} />
 		</CrudForm>
 	);
 }
