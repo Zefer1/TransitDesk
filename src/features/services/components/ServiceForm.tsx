@@ -175,32 +175,11 @@ export function ServiceForm({
 
 	return (
 		<form className="space-y-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm" onSubmit={handleSubmit}>
-			<div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-				<div>
-					<h2 className="text-2xl font-bold text-gray-900 dark:text-white">Service form</h2>
-					<p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-						Capture service details, transport assignment, staffing, and passenger planning in one place.
-					</p>
-				</div>
-				<div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
-					{onCancel ? (
-						<button
-							type="button"
-							onClick={onCancel}
-							disabled={isSubmitting}
-							className="inline-flex w-full items-center justify-center rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 transition hover:bg-gray-100 dark:hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
-						>
-							Cancel
-						</button>
-					) : null}
-					<button
-						type="submit"
-						disabled={isSubmitting || isLockedByStatus}
-						className="inline-flex w-full items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
-					>
-						{isLockedByStatus ? "Locked" : isSubmitting ? "Saving..." : submitLabel}
-					</button>
-				</div>
+			<div>
+				<h2 className="text-2xl font-bold text-gray-900 dark:text-white">Service form</h2>
+				<p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+					Capture service details, transport assignment, staffing, and passenger planning in one place.
+				</p>
 			</div>
 
 			{isLockedByStatus ? (
@@ -272,6 +251,26 @@ export function ServiceForm({
 					removeGuideLanguage={removeGuideLanguage}
 				/>
 			</fieldset>
+
+			<div className="flex flex-col gap-2 border-t border-gray-200 dark:border-gray-700 pt-6 sm:flex-row sm:justify-end">
+				{onCancel ? (
+					<button
+						type="button"
+						onClick={onCancel}
+						disabled={isSubmitting}
+						className="inline-flex w-full items-center justify-center rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 transition hover:bg-gray-100 dark:hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+					>
+						Cancel
+					</button>
+				) : null}
+				<button
+					type="submit"
+					disabled={isSubmitting || isLockedByStatus}
+					className="inline-flex w-full items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+				>
+					{isLockedByStatus ? "Locked" : isSubmitting ? "Saving..." : submitLabel}
+				</button>
+			</div>
 		</form>
 	);
 }
