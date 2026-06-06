@@ -68,9 +68,12 @@ VITE_API_URL=http://localhost:3001/api
 ```bash
 cd server
 npx prisma migrate deploy
-npm run seed
+npm run seed        # creates the admin account only
 cd ..
 ```
+
+To start with sample fleet and service data instead, run `npm run seed:demo`
+in `server/` (it replaces existing data with a demo dataset).
 
 ### 5. Run
 
