@@ -9,6 +9,7 @@
     "build": "tsc",
     "start": "node dist/app.js",
     "seed": "tsx seed.ts",
+    "seed:demo": "tsx seed.demo.ts",
     "seed:test": "dotenv -e .env.test -- tsx seed.test.ts",
     "start:test": "dotenv -e .env.test -- tsx app.ts"
   },
