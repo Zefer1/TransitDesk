@@ -107,6 +107,16 @@ npx playwright install   # First time only
 npx playwright test
 ```
 
+## Deployment
+
+The public demo runs on free tiers: the frontend on Vercel, the backend on
+Render (`render.yaml`), and PostgreSQL on Neon. The Render free service sleeps
+after inactivity, so the first request can take ~30 seconds to wake.
+
+Backend env vars: `DATABASE_URL`, `JWT_SECRET`, `CORS_ORIGIN` (the frontend URL).
+Frontend env var: `VITE_API_URL` (the backend URL plus `/api`). After the first
+deploy, run `npm run seed:demo` once to load the sample data.
+
 ## Useful scripts
 
 ```bash
