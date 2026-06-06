@@ -51,7 +51,7 @@ test.describe('Services CRUD', () => {
         await expect(page.getByText('Tour', { exact: false }).first()).toBeVisible();
         await expect(page.getByText('Test Driver', { exact: false }).first()).toBeVisible();
         await expect(page.getByText('AA-00-BB', { exact: false }).first()).toBeVisible();
-        await expect(page.getByText(/Created by Administrator/)).toBeVisible();
+        await expect(page.getByText(/Created by Administrator/).first()).toBeVisible();
     });
 
     test('blocks passenger quantity above the vehicle capacity', async ({ page }) => {
@@ -124,6 +124,7 @@ test.describe('Services CRUD', () => {
         await expect(page).toHaveURL('/services');
 
         await page.getByRole('button', { name: `Delete service ${serviceId}` }).click();
+        await page.getByRole('dialog').getByRole('button', { name: 'Delete service', exact: true }).click();
 
         await expect(page.getByRole('button', { name: `Delete service ${serviceId}` })).not.toBeVisible();
     });
