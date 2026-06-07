@@ -1,12 +1,6 @@
 import { z } from "zod";
 import { GENDERS } from "./constants.js";
-
-const requiredText = (field: string) => z.string().trim().min(1, `${field} is required`);
-
-const optionalPhone = z.union([
-    z.literal(""),
-    z.string().trim().regex(/^\+?[0-9\s-]{9,20}$/, "Phone must be a valid phone number"),
-]).optional();
+import { requiredText, optionalPhone } from "./fields.js";
 
 export const guideCreateSchema = z.object({
     name: requiredText("Guide name"),
