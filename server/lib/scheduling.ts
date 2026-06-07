@@ -5,7 +5,7 @@ const ACTIVE_STATUSES = ["scheduled", "ongoing"] as const;
 
 export type ResourceKind = "vehicle" | "driver" | "guide";
 
-export interface ResourceIds {
+interface ResourceIds {
     vehicleId?: number;
     driverId?: number;
     guideId?: number;

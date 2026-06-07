@@ -1,13 +1,7 @@
 import { z } from "zod";
 
 import { GENDERS, DRIVER_LICENSES, VEHICLE_TYPES, SERVICE_TYPES, SERVICE_STATUSES } from "./constants.js";
-
-const requiredText = (field: string) => z.string().trim().min(1, `${field} is required`);
-
-const optionalPhone = z.union([
-    z.literal(""),
-    z.string().trim().regex(/^\+?[0-9\s-]{9,20}$/, "Phone must be a valid phone number"),
-]).optional();
+import { requiredText, optionalPhone } from "./fields.js";
 
 const optionalPositiveNumber = (field: string) =>
     z.preprocess(
