@@ -2,6 +2,13 @@
 
 Fleet operations dashboard for shuttle dispatchers. Schedule services, assign drivers and vehicles, track status transitions, and manage the supporting entities (drivers, vehicles, guides, users).
 
+## Background
+
+This started from a real problem at a van rental company. They managed bookings
+and prepared service sheets across four separate Excel files, so there were four
+different sources of truth and it was easy to make mistakes. TransitDesk replaces
+those spreadsheets with a single system where the data lives in one place.
+
 ## Stack
 
 - **Frontend:** React 19, TypeScript, Vite, Tailwind CSS, React Router, Zod, Axios
