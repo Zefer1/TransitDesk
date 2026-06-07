@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { VEHICLE_TYPES, SERVICE_TYPES } from "./constants.js";
-
-const requiredText = (field: string) => z.string().trim().min(1, `${field} is required`);
+import { requiredText } from "./fields.js";
 
 const optionalDate = (field: string) =>
     z.union([
