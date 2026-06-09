@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../api/auth.api";
 import { APP_ROUTES } from "../constants/routes";
-import { BetaBadge } from "../components/BetaBadge";
 
 export function LoginPage() {
     const navigate = useNavigate();
@@ -31,10 +30,7 @@ export function LoginPage() {
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center px-4">
             <div className="w-full max-w-sm">
                 <div className="mb-8 text-center">
-                    <div className="flex items-center justify-center gap-2">
-                        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">TransitDesk</h1>
-                        <BetaBadge />
-                    </div>
+                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white">TransitDesk</h1>
                     <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Sign in to your account</p>
                 </div>
 
