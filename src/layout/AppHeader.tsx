@@ -3,7 +3,6 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { APP_ROUTES } from '../constants/routes';
 import { clearAuth, getUser } from '../lib/auth';
 import { Avatar } from '../components/Avatar';
-import { BetaBadge } from '../components/BetaBadge';
 
 const NAV_ITEMS = [
   { to: APP_ROUTES.services, label: 'Services' },
@@ -52,7 +51,6 @@ export function AppHeader() {
             <Link to={APP_ROUTES.services} className="rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
               <h1 className="text-xl sm:text-2xl font-bold text-blue-600 truncate">TransitDesk</h1>
             </Link>
-            <BetaBadge />
           </div>
 
           <div className="hidden lg:flex items-center gap-1">
