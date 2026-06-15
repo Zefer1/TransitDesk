@@ -19,13 +19,21 @@ async function main() {
     await prisma.guide.deleteMany();
     await prisma.user.deleteMany();
 
-    const hashedPassword = await bcrypt.hash('admin123', 10);
     const admin = await prisma.user.create({
         data: {
             username: 'admin',
-            password: hashedPassword,
+            password: await bcrypt.hash('admin123', 10),
             name: 'Administrator',
             role: 'SUPER_ADMIN',
+        },
+    });
+
+    await prisma.user.create({
+        data: {
+            username: 'Employee',
+            password: await bcrypt.hash('employee123', 10),
+            name: 'Demo Employee',
+            role: 'EMPLOYEE',
         },
     });
 
