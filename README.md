@@ -95,8 +95,8 @@ Open `http://localhost:5173`.
 ## Demo credentials
 
 ```
-username: admin
-password: admin123
+username: Employee
+password: employee123
 ```
 
 ## Tests
