@@ -1,13 +1,23 @@
 import { useNavigate } from "react-router-dom";
 
 import type { Driver } from "../../../types/service.types";
+import { SortableHeader } from "../../../components/SortableHeader";
+import { useTableSort, type SortAccessors } from "../../../hooks/useTableSort";
 
 type DriverTableProps = {
 	drivers: Driver[];
 };
 
+const SORT_ACCESSORS: SortAccessors<Driver> = {
+	name: (driver) => driver.name,
+	license: (driver) => driver.license,
+	entitledToDrive: (driver) => driver.entitledToDrive,
+	phone: (driver) => driver.phone ?? "",
+};
+
 export function DriverTable({ drivers }: DriverTableProps) {
 	const navigate = useNavigate();
+	const { sorted, sortKey, direction, toggleSort } = useTableSort(drivers, SORT_ACCESSORS);
 
 	const goToDetail = (driverId: number) => {
 		navigate(`/drivers/${driverId}`);
@@ -41,7 +51,7 @@ export function DriverTable({ drivers }: DriverTableProps) {
 	return (
 		<div className="space-y-4">
 			<div className="grid gap-4 md:hidden">
-				{drivers.map((driver) => (
+				{sorted.map((driver) => (
 					<article
 						key={driver.id}
 						className="cursor-pointer rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-sm transition hover:border-blue-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus-within:border-blue-300"
@@ -83,30 +93,10 @@ export function DriverTable({ drivers }: DriverTableProps) {
 				<table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
 					<thead className="bg-gray-50 dark:bg-gray-900">
 						<tr>
-							<th
-								scope="col"
-								className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400"
-							>
-								Name
-							</th>
-							<th
-								scope="col"
-								className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400"
-							>
-								License
-							</th>
-							<th
-								scope="col"
-								className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400"
-							>
-								Can Drive
-							</th>
-							<th
-								scope="col"
-								className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400"
-							>
-								Phone
-							</th>
+							<SortableHeader label="Name" columnKey="name" activeKey={sortKey} direction={direction} onSort={toggleSort} />
+							<SortableHeader label="License" columnKey="license" activeKey={sortKey} direction={direction} onSort={toggleSort} />
+							<SortableHeader label="Can Drive" columnKey="entitledToDrive" activeKey={sortKey} direction={direction} onSort={toggleSort} />
+							<SortableHeader label="Phone" columnKey="phone" activeKey={sortKey} direction={direction} onSort={toggleSort} />
 							<th
 								scope="col"
 								className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400"
@@ -116,7 +106,7 @@ export function DriverTable({ drivers }: DriverTableProps) {
 						</tr>
 					</thead>
 					<tbody className="divide-y divide-gray-100 dark:divide-gray-700 bg-white dark:bg-gray-800">
-						{drivers.map((driver) => (
+						{sorted.map((driver) => (
 							<tr
 								key={driver.id}
 								className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 focus-within:bg-gray-50"

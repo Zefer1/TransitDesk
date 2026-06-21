@@ -1,12 +1,22 @@
 import { useNavigate } from "react-router-dom";
 import type { Guide } from "../../../types/service.types";
+import { SortableHeader } from "../../../components/SortableHeader";
+import { useTableSort, type SortAccessors } from "../../../hooks/useTableSort";
 
 type GuideTableProps = {
 	guides: Guide[];
 };
 
+const SORT_ACCESSORS: SortAccessors<Guide> = {
+	name: (guide) => guide.name,
+	gender: (guide) => guide.gender,
+	languages: (guide) => (guide.languages ?? []).join(", "),
+	phone: (guide) => guide.phone ?? "",
+};
+
 export function GuideTable({ guides }: GuideTableProps) {
 	const navigate = useNavigate();
+	const { sorted, sortKey, direction, toggleSort } = useTableSort(guides, SORT_ACCESSORS);
 
 	const goToDetail = (guideId: number) => {
 		navigate(`/guides/${guideId}`);
@@ -45,7 +55,7 @@ export function GuideTable({ guides }: GuideTableProps) {
 	return (
 		<div className="space-y-4">
 			<div className="grid gap-4 md:hidden">
-				{guides.map((guide) => (
+				{sorted.map((guide) => (
 					<article
 						key={guide.id}
 						className="cursor-pointer rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-sm transition hover:border-blue-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus-within:border-blue-300"
@@ -87,30 +97,10 @@ export function GuideTable({ guides }: GuideTableProps) {
 				<table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
 					<thead className="bg-gray-50 dark:bg-gray-900">
 						<tr>
-							<th
-								scope="col"
-								className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400"
-							>
-								Name
-							</th>
-							<th
-								scope="col"
-								className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400"
-							>
-								Gender
-							</th>
-							<th
-								scope="col"
-								className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400"
-							>
-								Languages
-							</th>
-							<th
-								scope="col"
-								className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400"
-							>
-								Phone
-							</th>
+							<SortableHeader label="Name" columnKey="name" activeKey={sortKey} direction={direction} onSort={toggleSort} />
+							<SortableHeader label="Gender" columnKey="gender" activeKey={sortKey} direction={direction} onSort={toggleSort} />
+							<SortableHeader label="Languages" columnKey="languages" activeKey={sortKey} direction={direction} onSort={toggleSort} />
+							<SortableHeader label="Phone" columnKey="phone" activeKey={sortKey} direction={direction} onSort={toggleSort} />
 							<th
 								scope="col"
 								className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400"
@@ -120,7 +110,7 @@ export function GuideTable({ guides }: GuideTableProps) {
 						</tr>
 					</thead>
 					<tbody className="divide-y divide-gray-100 dark:divide-gray-700 bg-white dark:bg-gray-800">
-						{guides.map((guide) => (
+						{sorted.map((guide) => (
 							<tr
 								key={guide.id}
 								className="cursor-pointer transition hover:bg-gray-50 dark:hover:bg-gray-700 focus-within:bg-gray-50"

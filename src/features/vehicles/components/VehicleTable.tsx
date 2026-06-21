@@ -1,12 +1,23 @@
 import { useNavigate } from "react-router-dom";
 import type { Vehicle } from "../../../types/service.types";
+import { SortableHeader } from "../../../components/SortableHeader";
+import { useTableSort, type SortAccessors } from "../../../hooks/useTableSort";
 
 type VehicleTableProps = {
 	vehicles: Vehicle[];
 };
 
+const SORT_ACCESSORS: SortAccessors<Vehicle> = {
+	licensePlate: (vehicle) => vehicle.licensePlate,
+	brandModel: (vehicle) => `${vehicle.brand} ${vehicle.model}`,
+	passengerCapacity: (vehicle) => vehicle.passengerCapacity,
+	type: (vehicle) => vehicle.type,
+	year: (vehicle) => vehicle.year,
+};
+
 export function VehicleTable({ vehicles }: VehicleTableProps) {
 	const navigate = useNavigate();
+	const { sorted, sortKey, direction, toggleSort } = useTableSort(vehicles, SORT_ACCESSORS);
 
 	const goToDetail = (vehicleId: number) => {
 		navigate(`/vehicles/${vehicleId}`);
@@ -40,7 +51,7 @@ export function VehicleTable({ vehicles }: VehicleTableProps) {
 	return (
 		<div className="space-y-4">
 			<div className="grid gap-4 md:hidden">
-				{vehicles.map((vehicle) => (
+				{sorted.map((vehicle) => (
 					<article
 						key={vehicle.id}
 						className="cursor-pointer rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-sm transition hover:border-blue-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus-within:border-blue-300"
@@ -84,36 +95,11 @@ export function VehicleTable({ vehicles }: VehicleTableProps) {
 				<table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
 					<thead className="bg-gray-50 dark:bg-gray-900">
 						<tr>
-							<th
-								scope="col"
-								className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400"
-							>
-								License Plate
-							</th>
-							<th
-								scope="col"
-								className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400"
-							>
-								Brand & Model
-							</th>
-							<th
-								scope="col"
-								className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400"
-							>
-								Capacity
-							</th>
-							<th
-								scope="col"
-								className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400"
-							>
-								Type
-							</th>
-							<th
-								scope="col"
-								className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400"
-							>
-								Year
-							</th>
+							<SortableHeader label="License Plate" columnKey="licensePlate" activeKey={sortKey} direction={direction} onSort={toggleSort} />
+							<SortableHeader label="Brand & Model" columnKey="brandModel" activeKey={sortKey} direction={direction} onSort={toggleSort} />
+							<SortableHeader label="Capacity" columnKey="passengerCapacity" activeKey={sortKey} direction={direction} onSort={toggleSort} />
+							<SortableHeader label="Type" columnKey="type" activeKey={sortKey} direction={direction} onSort={toggleSort} />
+							<SortableHeader label="Year" columnKey="year" activeKey={sortKey} direction={direction} onSort={toggleSort} />
 							<th
 								scope="col"
 								className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400"
@@ -123,7 +109,7 @@ export function VehicleTable({ vehicles }: VehicleTableProps) {
 						</tr>
 					</thead>
 					<tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-						{vehicles.map((vehicle) => (
+						{sorted.map((vehicle) => (
 							<tr
 								key={vehicle.id}
 								className="cursor-pointer transition hover:bg-gray-50 dark:hover:bg-gray-700"
