@@ -2,10 +2,20 @@ import type { Service } from "../../../types/service.types";
 import { useNavigate } from "react-router-dom";
 import { StatusBadge } from "./StatusBadge";
 import { EmptyState } from "../../../components/EmptyState";
+import { SortableHeader } from "../../../components/SortableHeader";
+import { useTableSort, type SortAccessors } from "../../../hooks/useTableSort";
 
 type Props = {
   services: Service[];
   onDelete?: (serviceId: number) => void;
+};
+
+const SORT_ACCESSORS: SortAccessors<Service> = {
+  description: (service) => service.description,
+  type: (service) => service.type,
+  status: (service) => service.status,
+  scheduledAt: (service) => new Date(service.scheduledAt).getTime(),
+  passengerQuantity: (service) => service.passengerQuantity ?? 0,
 };
 
 function formatScheduledAt(isoDate: string): string {
@@ -19,6 +29,7 @@ function formatScheduledAt(isoDate: string): string {
 
 export function ServiceTable({ services, onDelete }: Props) {
   const navigate = useNavigate();
+  const { sorted, sortKey, direction, toggleSort } = useTableSort(services, SORT_ACCESSORS);
 
   const goToDetail = (serviceId: number) => {
     navigate(`/services/${serviceId}`);
@@ -68,7 +79,7 @@ export function ServiceTable({ services, onDelete }: Props) {
       ) : (
         <>
           <div className="grid gap-4 md:hidden">
-            {services.map((service) => (
+            {sorted.map((service) => (
               <article
                 key={service.id}
                 className="cursor-pointer rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-sm transition hover:border-blue-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus-within:border-blue-300"
@@ -113,16 +124,16 @@ export function ServiceTable({ services, onDelete }: Props) {
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
               <thead className="bg-gray-50 dark:bg-gray-900">
                 <tr>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400">Description</th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400">Type</th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400">Status</th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400">Scheduled</th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400">Passengers</th>
+                  <SortableHeader label="Description" columnKey="description" activeKey={sortKey} direction={direction} onSort={toggleSort} />
+                  <SortableHeader label="Type" columnKey="type" activeKey={sortKey} direction={direction} onSort={toggleSort} />
+                  <SortableHeader label="Status" columnKey="status" activeKey={sortKey} direction={direction} onSort={toggleSort} />
+                  <SortableHeader label="Scheduled" columnKey="scheduledAt" activeKey={sortKey} direction={direction} onSort={toggleSort} />
+                  <SortableHeader label="Passengers" columnKey="passengerQuantity" activeKey={sortKey} direction={direction} onSort={toggleSort} />
                   <th scope="col" className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 dark:divide-gray-700 bg-white dark:bg-gray-800">
-                {services.map((service) => (
+                {sorted.map((service) => (
                   <tr
                     key={service.id}
                     className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 focus-within:bg-gray-50"

@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 
 import { CrudFormSection, CrudSelectInput, CrudTextInput, CrudFormActions } from "../../components/CrudFormPrimitives";
 import { Modal } from "../../components/Modal";
+import { SortableHeader } from "../../components/SortableHeader";
 import { useToast } from "../../components/useToast";
+import { useTableSort, type SortAccessors } from "../../hooks/useTableSort";
 import { getUser } from "../../lib/auth";
 import { extractApiError } from "../../lib/apiError";
 import {
@@ -37,6 +39,13 @@ type FormState = {
 
 const EMPTY_FORM: FormState = { username: "", name: "", password: "", role: "EMPLOYEE" };
 
+const SORT_ACCESSORS: SortAccessors<User> = {
+	name: (user) => user.name,
+	username: (user) => user.username,
+	role: (user) => roleLabel(user.role),
+	updatedBy: (user) => user.updatedBy?.name ?? "",
+};
+
 export function UsersSection() {
 	const { addToast } = useToast();
 	const currentUser = getUser();
@@ -47,6 +56,7 @@ export function UsersSection() {
 	}
 
 	const [users, setUsers] = useState<User[]>([]);
+	const { sorted, sortKey, direction, toggleSort } = useTableSort(users, SORT_ACCESSORS);
 	const [isLoading, setIsLoading] = useState(true);
 	const [loadError, setLoadError] = useState<string | null>(null);
 
@@ -170,15 +180,15 @@ export function UsersSection() {
 					<table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
 						<thead className="bg-gray-50 dark:bg-gray-900">
 							<tr>
-								<th scope="col" className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400">Name</th>
-								<th scope="col" className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400">Username</th>
-								<th scope="col" className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400">Role</th>
-								<th scope="col" className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400">Last edited by</th>
+								<SortableHeader label="Name" columnKey="name" activeKey={sortKey} direction={direction} onSort={toggleSort} />
+								<SortableHeader label="Username" columnKey="username" activeKey={sortKey} direction={direction} onSort={toggleSort} />
+								<SortableHeader label="Role" columnKey="role" activeKey={sortKey} direction={direction} onSort={toggleSort} />
+								<SortableHeader label="Last edited by" columnKey="updatedBy" activeKey={sortKey} direction={direction} onSort={toggleSort} />
 								<th scope="col" className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400">Actions</th>
 							</tr>
 						</thead>
 						<tbody className="divide-y divide-gray-100 dark:divide-gray-700 bg-white dark:bg-gray-800">
-							{users.map((user) => (
+							{sorted.map((user) => (
 								<tr key={user.id}>
 									<td className="px-4 py-3 text-sm text-gray-900 dark:text-white">{user.name}</td>
 									<td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{user.username}</td>
