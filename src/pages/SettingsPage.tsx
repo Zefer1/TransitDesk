@@ -120,19 +120,19 @@ export function SettingsPage() {
           label="Company Name"
           value={form.companyName}
           onChange={(value) => setForm((current) => ({ ...current, companyName: value }))}
-          placeholder="e.g. Extreme Courtesy"
+          placeholder="e.g. Madeira Shuttles"
         />
         <CrudTextInput
           label="RNAAT Number"
           value={form.rnaat}
           onChange={(value) => setForm((current) => ({ ...current, rnaat: value }))}
-          placeholder="e.g. RNAAT 598 M"
+          placeholder="e.g. RNAAT 123 M"
         />
         <CrudTextInput
           label="TP Number"
           value={form.tp}
           onChange={(value) => setForm((current) => ({ ...current, tp: value }))}
-          placeholder="e.g. TP 10075 M"
+          placeholder="e.g. TP 12345 M"
         />
         <CrudTextInput
           label="Commercial Designation"
