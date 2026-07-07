@@ -2,7 +2,7 @@
 
 Fleet operations dashboard for shuttle dispatchers. Schedule services, assign drivers and vehicles, track status transitions, and manage the supporting entities (drivers, vehicles, guides, users).
 
-**Live demo:** https://transit-desk-navy.vercel.app — log in with `admin` / `admin123`. The backend is on a free tier, so the first request after a while can take ~30s to wake up.
+**Live demo:** https://transit-desk-navy.vercel.app - log in with `admin` / `admin123`. The backend is on a free tier, so the first request after a while can take ~30s to wake up.
 
 ## Background
 
